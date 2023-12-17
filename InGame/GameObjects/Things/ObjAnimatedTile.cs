@@ -5,96 +5,95 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+internal class ObjAnimatedTile : GameObject
 {
-    internal class ObjAnimatedTile : GameObject
+    public readonly CSprite Sprite;
+
+    private readonly Rectangle _sourceRectangle;
+
+    private int _currentFrame;
+    private float _timeCounter;
+
+    private readonly int _frames;
+    private readonly int _animationSpeed;
+
+    // TODO_OPT: should probably only switch the tilemap values
+    // one object could update a lot of tiles in the tilemap
+    // would be better for performance
+    public ObjAnimatedTile(Map.Map map, int posX, int posY,
+        string spriteId, int frames, int animationSpeed, bool sync, int spriteEffects, int drawLayer) : base(map)
     {
-        public readonly CSprite Sprite;
+        var sprite = Resources.GetSprite(spriteId);
 
-        private readonly Rectangle _sourceRectangle;
+        _sourceRectangle = sprite.ScaledRectangle;
 
-        private int _currentFrame;
-        private float _timeCounter;
+        SprEditorImage = sprite.Texture;
+        EditorIconSource = _sourceRectangle;
 
-        private readonly int _frames;
-        private readonly int _animationSpeed;
+        EntityPosition = new CPosition(posX, posY, 0);
+        EntitySize = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
 
-        // TODO_OPT: should probably only switch the tilemap values
-        // one object could update a lot of tiles in the tilemap
-        // would be better for performance
-        public ObjAnimatedTile(Map.Map map, int posX, int posY,
-            string spriteId, int frames, int animationSpeed, bool sync, int spriteEffects, int drawLayer) : base(map)
+        _frames = frames;
+        _animationSpeed = animationSpeed;
+        Sprite = new CSprite(sprite.Texture, EntityPosition, _sourceRectangle, Vector2.Zero)
         {
-            var sprite = Resources.GetSprite(spriteId);
+            Scale = sprite.Scale,
+            SpriteEffect = (SpriteEffects)spriteEffects
+        };
 
-            _sourceRectangle = sprite.ScaledRectangle;
+        AddComponent(UpdateComponent.Index, new UpdateComponent(sync ? UpdateSync : UpdateNoSync));
+        AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, drawLayer));
 
-            SprEditorImage = sprite.Texture;
-            EditorIconSource = _sourceRectangle;
+        // randomize the starting state of the animation
+        if (!sync) 
+            RandomizeStartFrame();
+    }
 
-            EntityPosition = new CPosition(posX, posY, 0);
-            EntitySize = new Rectangle(0, 0, _sourceRectangle.Width, _sourceRectangle.Height);
+    public void RandomizeStartFrame()
+    {
+        var pX = EntityPosition.X / 200f;
+        var pY = EntityPosition.Y / 200f;
+        _timeCounter = (int)((pX * pX + pY * pY) * 30f);
 
-            _frames = frames;
-            _animationSpeed = animationSpeed;
-            Sprite = new CSprite(sprite.Texture, EntityPosition, _sourceRectangle, Vector2.Zero)
-            {
-                Scale = sprite.Scale,
-                SpriteEffect = (SpriteEffects)spriteEffects
-            };
+        while (_timeCounter >= _animationSpeed)
+        {
+            _currentFrame++;
+            if (_currentFrame >= _frames)
+                _currentFrame = 0;
 
-            AddComponent(UpdateComponent.Index, new UpdateComponent(sync ? UpdateSync : UpdateNoSync));
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(Sprite, drawLayer));
-
-            // randomize the starting state of the animation
-            if (!sync) 
-                RandomizeStartFrame();
+            _timeCounter -= _animationSpeed;
         }
+    }
 
-        public void RandomizeStartFrame()
+    public void UpdateSync()
+    {
+        // all the animations are in sync
+        _currentFrame = (int)Game1.TotalGameTime %
+                        (_frames * _animationSpeed) / _animationSpeed;
+
+        UpdateSourceRectangle();
+    }
+
+    public void UpdateNoSync()
+    {
+        _timeCounter += Game1.DeltaTime;
+
+        if (_timeCounter > _animationSpeed)
         {
-            var pX = EntityPosition.X / 200f;
-            var pY = EntityPosition.Y / 200f;
-            _timeCounter = (int)((pX * pX + pY * pY) * 30f);
+            _currentFrame++;
+            _timeCounter -= _animationSpeed;
 
-            while (_timeCounter >= _animationSpeed)
-            {
-                _currentFrame++;
-                if (_currentFrame >= _frames)
-                    _currentFrame = 0;
-
-                _timeCounter -= _animationSpeed;
-            }
-        }
-
-        public void UpdateSync()
-        {
-            // all the animations are in sync
-            _currentFrame = (int)Game1.TotalGameTime %
-                            (_frames * _animationSpeed) / _animationSpeed;
+            if (_currentFrame >= _frames)
+                _currentFrame = 0;
 
             UpdateSourceRectangle();
         }
+    }
 
-        public void UpdateNoSync()
-        {
-            _timeCounter += Game1.DeltaTime;
-
-            if (_timeCounter > _animationSpeed)
-            {
-                _currentFrame++;
-                _timeCounter -= _animationSpeed;
-
-                if (_currentFrame >= _frames)
-                    _currentFrame = 0;
-
-                UpdateSourceRectangle();
-            }
-        }
-
-        public void UpdateSourceRectangle()
-        {
-            Sprite.SourceRectangle.X = _sourceRectangle.X + _sourceRectangle.Width * _currentFrame;
-        }
+    public void UpdateSourceRectangle()
+    {
+        Sprite.SourceRectangle.X = _sourceRectangle.X + _sourceRectangle.Width * _currentFrame;
     }
 }

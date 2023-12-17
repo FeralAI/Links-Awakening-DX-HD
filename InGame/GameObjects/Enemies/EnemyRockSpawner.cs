@@ -4,43 +4,42 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.Map;
 
-namespace ProjectZ.InGame.GameObjects.Enemies
+namespace ProjectZ.InGame.GameObjects.Enemies;
+
+internal class EnemyRockSpawner : GameObject
 {
-    internal class EnemyRockSpawner : GameObject
+    private readonly Rectangle _field;
+
+    private float _spawnCounter;
+
+    public EnemyRockSpawner() : base("rock") { }
+
+    public EnemyRockSpawner(Map.Map map, int posX, int posY, int width, int height) : base(map)
     {
-        private readonly Rectangle _field;
+        EntityPosition = new CPosition(posX, posY, 0);
+        EntitySize = new Rectangle(0, 0, width, height);
 
-        private float _spawnCounter;
+        _field = new Rectangle(posX, posY, width, height);
+        AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+    }
 
-        public EnemyRockSpawner() : base("rock") { }
-
-        public EnemyRockSpawner(Map.Map map, int posX, int posY, int width, int height) : base(map)
+    private void Update()
+    {
+        if (_field.Contains(MapManager.ObjLink.EntityPosition.Position))
         {
-            EntityPosition = new CPosition(posX, posY, 0);
-            EntitySize = new Rectangle(0, 0, width, height);
+            _spawnCounter -= Game1.DeltaTime;
 
-            _field = new Rectangle(posX, posY, width, height);
-            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-        }
-
-        private void Update()
-        {
-            if (_field.Contains(MapManager.ObjLink.EntityPosition.Position))
+            if (_spawnCounter < 0)
             {
-                _spawnCounter -= Game1.DeltaTime;
+                _spawnCounter += Game1.RandomNumber.Next(750, 1500);
 
-                if (_spawnCounter < 0)
-                {
-                    _spawnCounter += Game1.RandomNumber.Next(750, 1500);
+                var playerPosition = MathHelper.Clamp(MapManager.ObjLink.EntityPosition.X, _field.Left + 80, _field.Right - 80);
 
-                    var playerPosition = MathHelper.Clamp(MapManager.ObjLink.EntityPosition.X, _field.Left + 80, _field.Right - 80);
-
-                    // spawn the rocks around the player inside the field
-                    var posX = playerPosition - 80 + Game1.RandomNumber.Next(0, 160);
-                    var posY = _field.Y - Game1.RandomNumber.Next(0, 16);
-                    var objRock = new EnemyRock(Map, new Vector2(posX, posY));
-                    Map.Objects.SpawnObject(objRock);
-                }
+                // spawn the rocks around the player inside the field
+                var posX = playerPosition - 80 + Game1.RandomNumber.Next(0, 160);
+                var posY = _field.Y - Game1.RandomNumber.Next(0, 16);
+                var objRock = new EnemyRock(Map, new Vector2(posX, posY));
+                Map.Objects.SpawnObject(objRock);
             }
         }
     }

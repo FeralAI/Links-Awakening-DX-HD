@@ -1,68 +1,67 @@
 using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.GameObjects.Base.Components;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+internal class ObjPositionDialog : GameObject
 {
-    internal class ObjPositionDialog : GameObject
+    public static Map.Map CurrentMap;
+
+    private readonly GameObject _spawnObject;
+
+    private readonly string _strKey;
+    private readonly string _strValue;
+
+    private bool _isSpawned;
+
+    public ObjPositionDialog() : base("editor position dialog") { }
+
+    public ObjPositionDialog(Map.Map map, int posX, int posY, string strKey, string strValue, string dialogName) : base(map)
     {
-        public static Map.Map CurrentMap;
+        _strKey = strKey;
+        _strValue = strValue;
 
-        private readonly GameObject _spawnObject;
+        CurrentMap = map;
+        Game1.GameManager.SaveManager.SetInt(dialogName + "posX", posX);
+        Game1.GameManager.SaveManager.SetInt(dialogName + "posY", posY);
 
-        private readonly string _strKey;
-        private readonly string _strValue;
+        _spawnObject = new ObjDialogBox(map, posX, posY, dialogName);
 
-        private bool _isSpawned;
+        // spawn object deactivated
+        Map.Objects.SpawnObject(_spawnObject);
+        _spawnObject.IsActive = false;
 
-        public ObjPositionDialog() : base("editor position dialog") { }
-
-        public ObjPositionDialog(Map.Map map, int posX, int posY, string strKey, string strValue, string dialogName) : base(map)
+        // add key change listener
+        if (!string.IsNullOrEmpty(_strKey))
         {
-            _strKey = strKey;
-            _strValue = strValue;
-
-            CurrentMap = map;
-            Game1.GameManager.SaveManager.SetInt(dialogName + "posX", posX);
-            Game1.GameManager.SaveManager.SetInt(dialogName + "posY", posY);
-
-            _spawnObject = new ObjDialogBox(map, posX, posY, dialogName);
-
-            // spawn object deactivated
-            Map.Objects.SpawnObject(_spawnObject);
-            _spawnObject.IsActive = false;
-
-            // add key change listener
-            if (!string.IsNullOrEmpty(_strKey))
-            {
-                AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
-                // if we spawn a door we need to use this here for objects refering to the player enter position in the init method
-                KeyChanged();
-            }
-            else
-            {
-                _spawnObject.IsActive = true;
-                IsDead = true;
-            }
+            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            // if we spawn a door we need to use this here for objects refering to the player enter position in the init method
+            KeyChanged();
         }
-
-        //public override void Init()
-        //{
-        //    KeyChanged();
-        //}
-
-        private void KeyChanged()
+        else
         {
-            var value = Game1.GameManager.SaveManager.GetString(_strKey);
+            _spawnObject.IsActive = true;
+            IsDead = true;
+        }
+    }
 
-            if (!_isSpawned && value == _strValue)
-            {
-                // activate the object
-                _spawnObject.IsActive = true;
+    //public override void Init()
+    //{
+    //    KeyChanged();
+    //}
 
-                _isSpawned = true;
+    private void KeyChanged()
+    {
+        var value = Game1.GameManager.SaveManager.GetString(_strKey);
 
-                Map.Objects.DeleteObjects.Add(this);
-            }
+        if (!_isSpawned && value == _strValue)
+        {
+            // activate the object
+            _spawnObject.IsActive = true;
+
+            _isSpawned = true;
+
+            Map.Objects.DeleteObjects.Add(this);
         }
     }
 }

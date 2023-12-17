@@ -3,38 +3,37 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.GameObjects.Base.Pools;
 using ProjectZ.InGame.Map;
 
-namespace ProjectZ.InGame.GameObjects.Base.Systems
+namespace ProjectZ.InGame.GameObjects.Base.Systems;
+
+class SystemAi
 {
-    class SystemAi
+    public ComponentPool Pool;
+
+    private readonly List<GameObject> _objectList = [];
+
+    public void Update()
     {
-        public ComponentPool Pool;
+        _objectList.Clear();
+        Pool.GetComponentList(_objectList,
+            (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
+            (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
+            (int)(Game1.RenderWidth / MapManager.Camera.Scale),
+            (int)(Game1.RenderHeight / MapManager.Camera.Scale), AiComponent.Mask);
 
-        private readonly List<GameObject> _objectList = new List<GameObject>();
-
-        public void Update()
+        foreach (var gameObject in _objectList)
         {
-            _objectList.Clear();
-            Pool.GetComponentList(_objectList,
-                (int)((MapManager.Camera.X - Game1.RenderWidth / 2) / MapManager.Camera.Scale),
-                (int)((MapManager.Camera.Y - Game1.RenderHeight / 2) / MapManager.Camera.Scale),
-                (int)(Game1.RenderWidth / MapManager.Camera.Scale),
-                (int)(Game1.RenderHeight / MapManager.Camera.Scale), AiComponent.Mask);
+            if (!gameObject.IsActive)
+                continue;
 
-            foreach (var gameObject in _objectList)
-            {
-                if (!gameObject.IsActive)
-                    continue;
+            var aiComponent = (gameObject.Components[AiComponent.Index]) as AiComponent;
 
-                var aiComponent = (gameObject.Components[AiComponent.Index]) as AiComponent;
+            aiComponent?.CurrentState.Update?.Invoke();
 
-                aiComponent?.CurrentState.Update?.Invoke();
+            foreach (var trigger in aiComponent.CurrentState.Trigger)
+                trigger.Update();
 
-                foreach (var trigger in aiComponent.CurrentState.Trigger)
-                    trigger.Update();
-
-                foreach (var trigger in aiComponent.Trigger)
-                    trigger.Update();
-            }
+            foreach (var trigger in aiComponent.Trigger)
+                trigger.Update();
         }
     }
 }

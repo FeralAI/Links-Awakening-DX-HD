@@ -5,30 +5,29 @@ using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+internal class ObjHoleResetPoint : GameObject
 {
-    internal class ObjHoleResetPoint : GameObject
+    private readonly int _direction;
+
+    public ObjHoleResetPoint(Map.Map map, int posX, int posY, int direction) : base(map)
     {
-        private readonly int _direction;
+        SprEditorImage = Resources.SprWhite;
+        EditorIconSource = new Rectangle(0, 0, 16, 16);
+        EditorColor = Color.Yellow * 0.75f;
 
-        public ObjHoleResetPoint(Map.Map map, int posX, int posY, int direction) : base(map)
-        {
-            SprEditorImage = Resources.SprWhite;
-            EditorIconSource = new Rectangle(0, 0, 16, 16);
-            EditorColor = Color.Yellow * 0.75f;
+        EntityPosition = new CPosition(posX, posY, 0);
+        EntitySize = new Rectangle(0, 0, 16, 16);
 
-            EntityPosition = new CPosition(posX, posY, 0);
-            EntitySize = new Rectangle(0, 0, 16, 16);
+        _direction = direction;
 
-            _direction = direction;
+        var collisionRectangle = new Rectangle(posX, posY, 16, 16);
+        AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
+    }
 
-            var collisionRectangle = new Rectangle(posX, posY, 16, 16);
-            AddComponent(ObjectCollisionComponent.Index, new ObjectCollisionComponent(collisionRectangle, OnCollision));
-        }
-
-        private void OnCollision(GameObject gameObject)
-        {
-            MapManager.ObjLink.SetHoleResetPosition(EntityPosition.Position, _direction);
-        }
+    private void OnCollision(GameObject gameObject)
+    {
+        MapManager.ObjLink.SetHoleResetPosition(EntityPosition.Position, _direction);
     }
 }

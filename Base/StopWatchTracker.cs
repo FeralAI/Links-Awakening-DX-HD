@@ -1,56 +1,50 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace ProjectZ.Base
+namespace ProjectZ.Base;
+
+public class StopWatchTracker(int averageSize)
 {
-    public class StopWatchTracker
+    private readonly Dictionary<string, TickCounter> _timespans = [];
+    private readonly Stopwatch _stopWatch = new();
+
+    private string _timespanName;
+    private readonly int _averageSize = averageSize;
+
+    public void Start(string timespanName)
     {
-        private readonly Dictionary<string, TickCounter> _timespans = new Dictionary<string, TickCounter>();
-        private readonly Stopwatch _stopWatch = new Stopwatch();
+        if (_timespanName != null)
+            Stop();
 
-        private string _timespanName;
-        private readonly int _averageSize;
+        _timespanName = timespanName;
 
-        public StopWatchTracker(int averageSize)
-        {
-            _averageSize = averageSize;
-        }
+        _stopWatch.Reset();
+        _stopWatch.Start();
+    }
 
-        public void Start(string timespanName)
-        {
-            if (_timespanName != null)
-                Stop();
+    public void Stop()
+    {
+        if (_timespanName == null)
+            return;
+        
+        _stopWatch.Stop();
 
-            _timespanName = timespanName;
+        // add a new entry if the counter does not already exists
+        if (!_timespans.ContainsKey(_timespanName))
+            _timespans.Add(_timespanName, new TickCounter(_averageSize));
 
-            _stopWatch.Reset();
-            _stopWatch.Start();
-        }
+        _timespans[_timespanName].AddTick(_stopWatch.ElapsedTicks);
 
-        public void Stop()
-        {
-            if (_timespanName == null)
-                return;
-            
-            _stopWatch.Stop();
+        _timespanName = null;
+    }
 
-            // add a new entry if the counter does not already exists
-            if (!_timespans.ContainsKey(_timespanName))
-                _timespans.Add(_timespanName, new TickCounter(_averageSize));
+    public string GetString()
+    {
+        var strCounter = "";
 
-            _timespans[_timespanName].AddTick(_stopWatch.ElapsedTicks);
+        foreach (var tickCounter in _timespans)
+            strCounter += (strCounter == "" ? "" : "\n") + tickCounter.Key + ":\t" + tickCounter.Value.AverageTime;
 
-            _timespanName = null;
-        }
-
-        public string GetString()
-        {
-            var strCounter = "";
-
-            foreach (var tickCounter in _timespans)
-                strCounter += (strCounter == "" ? "" : "\n") + tickCounter.Key + ":\t" + tickCounter.Value.AverageTime;
-
-            return strCounter;
-        }
+        return strCounter;
     }
 }

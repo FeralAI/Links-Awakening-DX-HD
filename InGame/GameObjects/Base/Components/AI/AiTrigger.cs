@@ -1,11 +1,8 @@
-﻿using Microsoft.Xna.Framework;
+﻿namespace ProjectZ.InGame.GameObjects.Base.Components.AI;
 
-namespace ProjectZ.InGame.GameObjects.Base.Components.AI
+class AiTrigger
 {
-    class AiTrigger
-    {
-        public virtual void OnInit() { }
+    public virtual void OnInit() { }
 
-        public virtual void Update() { }
-    }
+    public virtual void Update() { }
 }

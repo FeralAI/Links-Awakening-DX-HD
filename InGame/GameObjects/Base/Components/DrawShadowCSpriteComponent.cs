@@ -2,28 +2,27 @@
 using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.GameObjects.Base.CObjects;
 
-namespace ProjectZ.InGame.GameObjects.Base.Components
+namespace ProjectZ.InGame.GameObjects.Base.Components;
+
+class DrawShadowCSpriteComponent : DrawShadowComponent
 {
-    class DrawShadowCSpriteComponent : DrawShadowComponent
+    public CSprite Sprite;
+    public Color Color = Color.White;
+
+    public float? Height;
+    public float? Rotation;
+
+    public DrawShadowCSpriteComponent(CSprite sprite)
     {
-        public CSprite Sprite;
-        public Color Color = Color.White;
+        Sprite = sprite;
+        Draw = SpriteDrawFunction;
+    }
+    
+    public void SpriteDrawFunction(SpriteBatch spriteBatch)
+    {
+        if (!IsActive)
+            return;
 
-        public float? Height;
-        public float? Rotation;
-
-        public DrawShadowCSpriteComponent(CSprite sprite)
-        {
-            Sprite = sprite;
-            Draw = SpriteDrawFunction;
-        }
-        
-        public void SpriteDrawFunction(SpriteBatch spriteBatch)
-        {
-            if (!IsActive)
-                return;
-
-            Sprite.DrawShadow(spriteBatch, Color, -1, Height ?? Owner.Map.ShadowHeight, Rotation ?? Owner.Map.ShadowRotation);
-        }
+        Sprite.DrawShadow(spriteBatch, Color, -1, Height ?? Owner.Map.ShadowHeight, Rotation ?? Owner.Map.ShadowRotation);
     }
 }

@@ -7,136 +7,135 @@ using ProjectZ.InGame.GameObjects.Base.Components.AI;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.NPCs
+namespace ProjectZ.InGame.GameObjects.NPCs;
+
+internal class ObjFrog : GameObject
 {
-    internal class ObjFrog : GameObject
+    private readonly Animator _animator;
+    private readonly BodyComponent _body;
+    private readonly AiComponent _aiComponent;
+    private readonly AiTriggerSwitch _hitCooldown;
+
+    private int _direction;
+
+    public ObjFrog(Map.Map map, int posX, int posY) : base(map)
     {
-        private readonly Animator _animator;
-        private readonly BodyComponent _body;
-        private readonly AiComponent _aiComponent;
-        private readonly AiTriggerSwitch _hitCooldown;
+        SprEditorImage = Resources.SprNpCs;
+        EditorIconSource = new Rectangle(84, 28, 14, 12);
 
-        private int _direction;
+        EntityPosition = new CPosition(posX + 8, posY + 16, 0);
+        EntitySize = new Rectangle(-8, -16, 16, 16);
 
-        public ObjFrog(Map.Map map, int posX, int posY) : base(map)
+        _body = new BodyComponent(EntityPosition, -6, -8, 12, 8, 8)
         {
-            SprEditorImage = Resources.SprNpCs;
-            EditorIconSource = new Rectangle(84, 28, 14, 12);
+            MoveCollision = OnCollision,
+            CollisionTypes = Values.CollisionTypes.Normal |
+                             Values.CollisionTypes.NPCWall,
+            FieldRectangle = map.GetField(posX, posY),
+            MaxJumpHeight = 4f,
+            DragAir = 0.99f,
+            Drag = 0.85f,
+            Gravity = -0.15f
+        };
 
-            EntityPosition = new CPosition(posX + 8, posY + 16, 0);
-            EntitySize = new Rectangle(-8, -16, 16, 16);
+        _animator = AnimatorSaveLoad.LoadAnimator("NPCs/frog");
+        var sprite = new CSprite(EntityPosition);
+        var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-7, -12));
 
-            _body = new BodyComponent(EntityPosition, -6, -8, 12, 8, 8)
-            {
-                MoveCollision = OnCollision,
-                CollisionTypes = Values.CollisionTypes.Normal |
-                                 Values.CollisionTypes.NPCWall,
-                FieldRectangle = map.GetField(posX, posY),
-                MaxJumpHeight = 4f,
-                DragAir = 0.99f,
-                Drag = 0.85f,
-                Gravity = -0.15f
-            };
+        _hitCooldown = new AiTriggerSwitch(250);
 
-            _animator = AnimatorSaveLoad.LoadAnimator("NPCs/frog");
-            var sprite = new CSprite(EntityPosition);
-            var animationComponent = new AnimationComponent(_animator, sprite, new Vector2(-7, -12));
+        var stateSitInit = new AiState();
+        stateSitInit.Trigger.Add(new AiTriggerRandomTime(ToJump, 125, 1000));
+        stateSitInit.Trigger.Add(_hitCooldown);
+        var stateSit = new AiState();
+        stateSit.Trigger.Add(_hitCooldown);
+        stateSit.Trigger.Add(new AiTriggerRandomTime(ToJump, 750, 1500));
+        var stateJump = new AiState(UpdateJump);
+        stateJump.Trigger.Add(_hitCooldown);
 
-            _hitCooldown = new AiTriggerSwitch(250);
+        _aiComponent = new AiComponent();
+        _aiComponent.States.Add("sitInit", stateSitInit);
+        _aiComponent.States.Add("sit", stateSit);
+        _aiComponent.States.Add("jump", stateJump);
 
-            var stateSitInit = new AiState();
-            stateSitInit.Trigger.Add(new AiTriggerRandomTime(ToJump, 125, 1000));
-            stateSitInit.Trigger.Add(_hitCooldown);
-            var stateSit = new AiState();
-            stateSit.Trigger.Add(_hitCooldown);
-            stateSit.Trigger.Add(new AiTriggerRandomTime(ToJump, 750, 1500));
-            var stateJump = new AiState(UpdateJump);
-            stateJump.Trigger.Add(_hitCooldown);
+        // start by locking into a random direction
+        _direction = Game1.RandomNumber.Next(0, 4);
+        _animator.Play("sit_" + _direction);
+        _aiComponent.ChangeState("sitInit");
 
-            _aiComponent = new AiComponent();
-            _aiComponent.States.Add("sitInit", stateSitInit);
-            _aiComponent.States.Add("sit", stateSit);
-            _aiComponent.States.Add("jump", stateJump);
+        AddComponent(BodyComponent.Index, _body);
+        AddComponent(AiComponent.Index, _aiComponent);
+        AddComponent(AnimationComponent.Index, animationComponent);
+        //AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
+        AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+        AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
+        AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+        AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
+    }
 
-            // start by locking into a random direction
-            _direction = Game1.RandomNumber.Next(0, 4);
-            _animator.Play("sit_" + _direction);
-            _aiComponent.ChangeState("sitInit");
+    private void ToSit()
+    {
+        _aiComponent.ChangeState("sit");
 
-            AddComponent(BodyComponent.Index, _body);
-            AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(AnimationComponent.Index, animationComponent);
-            //AddComponent(CollisionComponent.Index, new BodyCollisionComponent(_body, Values.CollisionTypes.Normal));
-            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-            AddComponent(HittableComponent.Index, new HittableComponent(_body.BodyBox, OnHit));
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite));
-        }
+        // stop and wait
+        _body.Velocity = Vector3.Zero;
 
-        private void ToSit()
-        {
-            _aiComponent.ChangeState("sit");
+        _animator.Play("sit_" + _direction);
+    }
 
-            // stop and wait
-            _body.Velocity = Vector3.Zero;
+    private void ToJump()
+    {
+        _aiComponent.ChangeState("jump");
 
-            _animator.Play("sit_" + _direction);
-        }
+        // change the direction
+        var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
+        var direction = new Vector2(
+            (float)Math.Sin(rotation),
+            (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
+        _direction = AnimationHelper.GetDirection(direction);
 
-        private void ToJump()
-        {
-            _aiComponent.ChangeState("jump");
+        _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, 1.75f);
+        
+        _animator.Play("jump_" + _direction);
+    }
 
-            // change the direction
-            var rotation = Game1.RandomNumber.Next(0, 628) / 100f;
-            var direction = new Vector2(
-                (float)Math.Sin(rotation),
-                (float)Math.Cos(rotation)) * Game1.RandomNumber.Next(25, 40) / 50f;
-            _direction = AnimationHelper.GetDirection(direction);
+    private void UpdateJump()
+    {
+        // finished jumping
+        if (_body.IsGrounded)
+            ToSit();
+    }
 
-            _body.Velocity = new Vector3(direction.X * 1.5f, direction.Y * 1.5f, 1.75f);
-            
-            _animator.Play("jump_" + _direction);
-        }
+    private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+    {
+        if (!_hitCooldown.State)
+            return Values.HitCollision.None;
 
-        private void UpdateJump()
-        {
-            // finished jumping
-            if (_body.IsGrounded)
-                ToSit();
-        }
+        _hitCooldown.Reset();
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (!_hitCooldown.State)
-                return Values.HitCollision.None;
+        _body.Velocity.X += direction.X * 4.0f;
+        _body.Velocity.Y += direction.Y * 4.0f;
 
-            _hitCooldown.Reset();
+        return Values.HitCollision.Blocking;
+    }
 
-            _body.Velocity.X += direction.X * 4.0f;
-            _body.Velocity.Y += direction.Y * 4.0f;
+    private void OnCollision(Values.BodyCollision moveCollision)
+    {
+        if (_aiComponent.CurrentStateId != "jump")
+            return;
 
-            return Values.HitCollision.Blocking;
-        }
+        // repel after wall collision
+        if (moveCollision.HasFlag(Values.BodyCollision.Horizontal))
+            _body.Velocity.X *= -0.25f;
+        else if (moveCollision.HasFlag(Values.BodyCollision.Vertical))
+            _body.Velocity.Y *= -0.25f;
+    }
 
-        private void OnCollision(Values.BodyCollision moveCollision)
-        {
-            if (_aiComponent.CurrentStateId != "jump")
-                return;
+    private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+    {
+        if (type == PushableComponent.PushType.Impact)
+            _body.Velocity = new Vector3(direction * 1.25f, _body.Velocity.Z);
 
-            // repel after wall collision
-            if (moveCollision.HasFlag(Values.BodyCollision.Horizontal))
-                _body.Velocity.X *= -0.25f;
-            else if (moveCollision.HasFlag(Values.BodyCollision.Vertical))
-                _body.Velocity.Y *= -0.25f;
-        }
-
-        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
-        {
-            if (type == PushableComponent.PushType.Impact)
-                _body.Velocity = new Vector3(direction * 1.25f, _body.Velocity.Z);
-
-            return true;
-        }
+        return true;
     }
 }

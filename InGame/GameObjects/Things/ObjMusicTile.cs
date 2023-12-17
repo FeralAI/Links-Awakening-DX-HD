@@ -5,41 +5,40 @@ using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+class ObjMusicTile : GameObject
 {
-    class ObjMusicTile : GameObject
+    private readonly string[,] _musicData;
+    private string _lastTrack;
+
+    // @TODO: fade in/out
+    public ObjMusicTile() : base("editor music") { }
+
+    public ObjMusicTile(Map.Map map, int posX, int posY) : base(map)
     {
-        private string[,] _musicData;
-        private string _lastTrack;
+        AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
 
-        // @TODO: fade in/out
-        public ObjMusicTile() : base("editor music") { }
+        _musicData = DataMapSerializer.LoadData(Values.PathContentFolder + "musicOverworld.data");
+    }
 
-        public ObjMusicTile(Map.Map map, int posX, int posY) : base(map)
+    private void Update()
+    {
+        var position = new Point(
+            (int)(MapManager.ObjLink.PosX - Map.MapOffsetX * Values.TileSize) / 16,
+            (int)(MapManager.ObjLink.PosY - Map.MapOffsetY * Values.TileSize) / 16);
+
+        if (0 <= position.X && position.X < _musicData.GetLength(0) &&
+            0 <= position.Y && position.Y < _musicData.GetLength(1))
         {
-            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+            var track = _musicData[position.X, position.Y];
 
-            _musicData = DataMapSerializer.LoadData(Values.PathContentFolder + "musicOverworld.data");
-        }
-
-        private void Update()
-        {
-            var position = new Point(
-                (int)(MapManager.ObjLink.PosX - Map.MapOffsetX * Values.TileSize) / 16,
-                (int)(MapManager.ObjLink.PosY - Map.MapOffsetY * Values.TileSize) / 16);
-
-            if (0 <= position.X && position.X < _musicData.GetLength(0) &&
-                0 <= position.Y && position.Y < _musicData.GetLength(1))
+            if (_lastTrack != track)
             {
-                var track = _musicData[position.X, position.Y];
+                _lastTrack = track;
 
-                if (_lastTrack != track)
-                {
-                    _lastTrack = track;
-
-                    if (int.TryParse(track, out var songNr))
-                        Game1.GameManager.SetMusic(songNr, 0, false);
-                }
+                if (int.TryParse(track, out var songNr))
+                    Game1.GameManager.SetMusic(songNr, 0, false);
             }
         }
     }

@@ -5,74 +5,73 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.MidBoss
+namespace ProjectZ.InGame.GameObjects.MidBoss;
+
+internal class MBossBallAndChain : GameObject
 {
-    internal class MBossBallAndChain : GameObject
+    private readonly MBossBallAndChainSoldier _owner;
+    private readonly CSprite _sprite;
+
+    private Rectangle _sourceRectangleLink = new(179, 181, 4, 4);
+
+    private bool _isActive;
+
+    public MBossBallAndChain(Map.Map map, MBossBallAndChainSoldier owner) : base(map)
     {
-        private readonly MBossBallAndChainSoldier _owner;
-        private readonly CSprite _sprite;
+        EntityPosition = new CPosition(owner.EntityPosition.X - 5, owner.EntityPosition.Y - 8 + 2, 0);
+        EntitySize = new Rectangle(-8, -16, 16, 16);
 
-        private Rectangle _sourceRectangleLink = new Rectangle(179, 181, 4, 4);
+        _owner = owner;
+        _sprite = new CSprite(Resources.SprMidBoss, EntityPosition, new Rectangle(184, 175, 16, 16), new Vector2(-8, -16));
 
-        private bool _isActive;
+        var damageCollider = new CBox(EntityPosition, -6, -8 - 6, 0, 12, 12, 8);
+        AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
+        AddComponent(HittableComponent.Index, new HittableComponent(damageCollider, OnHit));
+        AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
+        AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+    }
 
-        public MBossBallAndChain(Map.Map map, MBossBallAndChainSoldier owner) : base(map)
-        {
-            EntityPosition = new CPosition(owner.EntityPosition.X - 5, owner.EntityPosition.Y - 8 + 2, 0);
-            EntitySize = new Rectangle(-8, -16, 16, 16);
+    public void Activate()
+    {
+        _isActive = true;
+    }
 
-            _owner = owner;
-            _sprite = new CSprite(Resources.SprMidBoss, EntityPosition, new Rectangle(184, 175, 16, 16), new Vector2(-8, -16));
+    public void Deactivate()
+    {
+        _isActive = false;
+    }
 
-            var damageCollider = new CBox(EntityPosition, -6, -8 - 6, 0, 12, 12, 8);
-            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageCollider, HitType.Enemy, 4));
-            AddComponent(HittableComponent.Index, new HittableComponent(damageCollider, OnHit));
-            AddComponent(PushableComponent.Index, new PushableComponent(damageCollider, OnPush));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
-        }
+    private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
+    {
+        if (!_isActive)
+            return Values.HitCollision.None;
 
-        public void Activate()
-        {
-            _isActive = true;
-        }
+        _owner.BlockBall();
+        return Values.HitCollision.RepellingParticle;
+    }
 
-        public void Deactivate()
-        {
-            _isActive = false;
-        }
+    private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+    {
+        if (!_isActive)
+            return false;
 
-        private Values.HitCollision OnHit(GameObject gameObject, Vector2 direction, HitType damageType, int damage, bool pieceOfPower)
-        {
-            if (!_isActive)
-                return Values.HitCollision.None;
-
+        if (type == PushableComponent.PushType.Impact)
             _owner.BlockBall();
-            return Values.HitCollision.RepellingParticle;
-        }
 
-        private bool OnPush(Vector2 direction, PushableComponent.PushType type)
+        return true;
+    }
+
+    private void Draw(SpriteBatch spriteBatch)
+    {
+        var handPosition = new Vector2(_owner.EntityPosition.X - 5, _owner.EntityPosition.Y - 15);
+        var direction = new Vector2(EntityPosition.X, EntityPosition.Y - 8) - handPosition;
+        // draw the chain
+        for (var i = 0; i < 3; i++)
         {
-            if (!_isActive)
-                return false;
-
-            if (type == PushableComponent.PushType.Impact)
-                _owner.BlockBall();
-
-            return true;
+            var linkPosition = handPosition + direction * ((i + 1) / 4.0f) - new Vector2(2, 2);
+            spriteBatch.Draw(Resources.SprMidBoss, linkPosition, _sourceRectangleLink, Color.White);
         }
 
-        private void Draw(SpriteBatch spriteBatch)
-        {
-            var handPosition = new Vector2(_owner.EntityPosition.X - 5, _owner.EntityPosition.Y - 15);
-            var direction = new Vector2(EntityPosition.X, EntityPosition.Y - 8) - handPosition;
-            // draw the chain
-            for (var i = 0; i < 3; i++)
-            {
-                var linkPosition = handPosition + direction * ((i + 1) / 4.0f) - new Vector2(2, 2);
-                spriteBatch.Draw(Resources.SprMidBoss, linkPosition, _sourceRectangleLink, Color.White);
-            }
-
-            _sprite.Draw(spriteBatch);
-        }
+        _sprite.Draw(spriteBatch);
     }
 }

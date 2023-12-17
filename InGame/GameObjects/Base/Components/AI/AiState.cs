@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 
-namespace ProjectZ.InGame.GameObjects.Base.Components.AI
+namespace ProjectZ.InGame.GameObjects.Base.Components.AI;
+
+class AiState
 {
-    class AiState
+    public delegate void InitFunction();
+    public delegate void UpdateFunction();
+
+    public InitFunction Init;
+    public UpdateFunction Update;
+
+    public List<AiTrigger> Trigger = [];
+
+    public AiState() { }
+
+    public AiState(UpdateFunction update)
     {
-        public delegate void InitFunction();
-        public delegate void UpdateFunction();
-
-        public InitFunction Init;
-        public UpdateFunction Update;
-
-        public List<AiTrigger> Trigger = new List<AiTrigger>();
-
-        public AiState() { }
-
-        public AiState(UpdateFunction update)
-        {
-            Update = update;
-        }
+        Update = update;
     }
 }

@@ -8,239 +8,238 @@ using ProjectZ.InGame.Things;
 using ProjectZ.InGame.Map;
 using System;
 
-namespace ProjectZ.InGame.GameObjects.Enemies
+namespace ProjectZ.InGame.GameObjects.Enemies;
+
+internal class MBossGrimCreeperFly : GameObject
 {
-    internal class MBossGrimCreeperFly : GameObject
+    private readonly BodyComponent _body;
+    private readonly AiComponent _aiComponent;
+    private readonly Animator _animator;
+    private readonly CSprite _sprite;
+    private readonly DamageFieldComponent _damageField;
+    private readonly HittableComponent _hittableComponent;
+    private readonly AiDamageState _damageState;
+    private readonly BodyDrawShadowComponent _shadowComponent;
+
+    private readonly Vector2 _targetPosition;
+
+    private const float FlySpeed = 1;
+    private const float AttackSpeed = 2;
+
+    private const float FadeTime = 100;
+    private float _fadeCounter;
+
+    private Vector2 _roomCenter;
+    private Vector2 _centerPosition;
+
+    private Vector2 _leaveStart;
+    private Vector2 _leaveEnd;
+    private float _leaveCounter;
+
+    private float _circlingOffset;
+    private float _circleSpeed;
+
+    // TODO: sync animations
+    public MBossGrimCreeperFly(Map.Map map, Vector2 position, Vector2 targetPosition) : base(map)
     {
-        private readonly BodyComponent _body;
-        private readonly AiComponent _aiComponent;
-        private readonly Animator _animator;
-        private readonly CSprite _sprite;
-        private readonly DamageFieldComponent _damageField;
-        private readonly HittableComponent _hittableComponent;
-        private readonly AiDamageState _damageState;
-        private readonly BodyDrawShadowComponent _shadowComponent;
+        Tags = Values.GameObjectTag.Enemy;
 
-        private readonly Vector2 _targetPosition;
+        EntityPosition = new CPosition(position.X, position.Y, 28);
+        EntitySize = new Rectangle(-8, -42, 16, 42);
 
-        private const float FlySpeed = 1;
-        private const float AttackSpeed = 2;
+        _roomCenter = Map.GetRoomCenter(targetPosition.X, targetPosition.Y - 43);
+        _targetPosition = targetPosition;
 
-        private const float FadeTime = 100;
-        private float _fadeCounter;
+        _animator = AnimatorSaveLoad.LoadAnimator("MidBoss/grim creeper fly");
+        _animator.Play("idle");
 
-        private Vector2 _roomCenter;
-        private Vector2 _centerPosition;
+        _sprite = new CSprite(EntityPosition) { Color = Color.Transparent };
+        var animatorComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
 
-        private Vector2 _leaveStart;
-        private Vector2 _leaveEnd;
-        private float _leaveCounter;
-
-        private float _circlingOffset;
-        private float _circleSpeed;
-
-        // TODO: sync animations
-        public MBossGrimCreeperFly(Map.Map map, Vector2 position, Vector2 targetPosition) : base(map)
+        _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
         {
-            Tags = Values.GameObjectTag.Enemy;
+            IgnoresZ = true,
+            IgnoreHoles = true,
+            Bounciness = 0.25f,
+            Gravity = -0.175f,
+            CollisionTypes = Values.CollisionTypes.None
+        };
 
-            EntityPosition = new CPosition(position.X, position.Y, 28);
-            EntitySize = new Rectangle(-8, -42, 16, 42);
+        _aiComponent = new AiComponent();
 
-            _roomCenter = Map.GetRoomCenter(targetPosition.X, targetPosition.Y - 43);
-            _targetPosition = targetPosition;
+        var stateSpawn = new AiState(UpdateSpawn);
+        var stateIdle = new AiState();
+        var stateAttack = new AiState(UpdateAttacking) { Init = InitAttack };
+        var stateFadeout = new AiState(UpdateFadeout) { Init = InitFadeout };
 
-            _animator = AnimatorSaveLoad.LoadAnimator("MidBoss/grim creeper fly");
-            _animator.Play("idle");
+        // grim creeper states
+        var stateCircling = new AiState(UpdateCircling);
+        var stateLeave = new AiState(UpdateLeave);
 
-            _sprite = new CSprite(EntityPosition) { Color = Color.Transparent };
-            var animatorComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
+        _aiComponent.States.Add("spawn", stateSpawn);
+        _aiComponent.States.Add("idle", stateIdle);
+        _aiComponent.States.Add("attack", stateAttack);
+        _aiComponent.States.Add("fadeout", stateFadeout);
+        _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1)
+        {
+            OnBurn = OnBurn
+        };
 
-            _body = new BodyComponent(EntityPosition, -6, -12, 12, 12, 8)
-            {
-                IgnoresZ = true,
-                IgnoreHoles = true,
-                Bounciness = 0.25f,
-                Gravity = -0.175f,
-                CollisionTypes = Values.CollisionTypes.None
-            };
+        _aiComponent.States.Add("circling", stateCircling);
+        _aiComponent.States.Add("leave", stateLeave);
 
-            _aiComponent = new AiComponent();
+        _aiComponent.ChangeState("spawn");
 
-            var stateSpawn = new AiState(UpdateSpawn);
-            var stateIdle = new AiState();
-            var stateAttack = new AiState(UpdateAttacking) { Init = InitAttack };
-            var stateFadeout = new AiState(UpdateFadeout) { Init = InitFadeout };
+        var damageBox = new CBox(EntityPosition, -5, -12, 0, 10, 10, 8, true);
+        var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8, true);
 
-            // grim creeper states
-            var stateCircling = new AiState(UpdateCircling);
-            var stateLeave = new AiState(UpdateLeave);
+        AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2) { IsActive = false });
+        AddComponent(HittableComponent.Index, _hittableComponent = new HittableComponent(hittableBox, _damageState.OnHit) { IsActive = false });
+        AddComponent(AiComponent.Index, _aiComponent);
+        AddComponent(BodyComponent.Index, _body);
+        AddComponent(BaseAnimationComponent.Index, animatorComponent);
+        AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
+        AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite) { Transparency = 0 });
+    }
 
-            _aiComponent.States.Add("spawn", stateSpawn);
-            _aiComponent.States.Add("idle", stateIdle);
-            _aiComponent.States.Add("attack", stateAttack);
-            _aiComponent.States.Add("fadeout", stateFadeout);
-            _damageState = new AiDamageState(this, _body, _aiComponent, _sprite, 1)
-            {
-                OnBurn = OnBurn
-            };
+    public void StartSequenceMode()
+    {
+        EntityPosition.Z = 0;
+        _centerPosition = EntityPosition.Position;
 
-            _aiComponent.States.Add("circling", stateCircling);
-            _aiComponent.States.Add("leave", stateLeave);
+        _body.VelocityTarget = Vector2.Zero;
+        _sprite.Color = Color.White;
+        _aiComponent.ChangeState("circling");
 
-            _aiComponent.ChangeState("spawn");
+        _circlingOffset = Game1.RandomNumber.Next(0, 20) / 5f;
+        _circleSpeed = Game1.RandomNumber.Next(100, 125);
+    }
 
-            var damageBox = new CBox(EntityPosition, -5, -12, 0, 10, 10, 8, true);
-            var hittableBox = new CBox(EntityPosition, -7, -14, 0, 14, 14, 8, true);
+    public void ToLeave()
+    {
+        _aiComponent.ChangeState("leave");
+        _leaveStart = EntityPosition.Position;
+        _leaveEnd = _targetPosition;
+    }
 
-            AddComponent(DamageFieldComponent.Index, _damageField = new DamageFieldComponent(damageBox, HitType.Enemy, 2) { IsActive = false });
-            AddComponent(HittableComponent.Index, _hittableComponent = new HittableComponent(hittableBox, _damageState.OnHit) { IsActive = false });
-            AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(BodyComponent.Index, _body);
-            AddComponent(BaseAnimationComponent.Index, animatorComponent);
-            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, _sprite, Values.LayerPlayer) { WaterOutline = false });
-            AddComponent(DrawShadowComponent.Index, _shadowComponent = new BodyDrawShadowComponent(_body, _sprite) { Transparency = 0 });
+    public void FightInit()
+    {
+        Game1.GameManager.PlaySoundEffect("D360-49-31");
+    }
+
+    private void OnBurn()
+    {
+        _body.IgnoresZ = false;
+    }
+
+    private void UpdateSpawn()
+    {
+        UpdateFading(false);
+
+        // move towards the target position
+        var direction = _targetPosition - EntityPosition.Position;
+        if (direction.Length() > FlySpeed * Game1.TimeMultiplier)
+        {
+            direction.Normalize();
+            _body.VelocityTarget = direction * FlySpeed;
         }
-
-        public void StartSequenceMode()
+        else
         {
-            EntityPosition.Z = 0;
-            _centerPosition = EntityPosition.Position;
-
+            // reached the target position
             _body.VelocityTarget = Vector2.Zero;
-            _sprite.Color = Color.White;
-            _aiComponent.ChangeState("circling");
-
-            _circlingOffset = Game1.RandomNumber.Next(0, 20) / 5f;
-            _circleSpeed = Game1.RandomNumber.Next(100, 125);
+            EntityPosition.Set(_targetPosition);
+            _aiComponent.ChangeState("idle");
         }
+    }
 
-        public void ToLeave()
+    private void UpdateLeave()
+    {
+        _leaveCounter += Game1.DeltaTime;
+
+        var percentage = 1 - MathF.Cos(_leaveCounter / 1000 * MathF.PI / 2);
+        var newPosition = Vector2.Lerp(_leaveStart, _leaveEnd, percentage);
+        EntityPosition.Set(newPosition);
+
+        // fade out
+        var transparency = Math.Clamp((1000 - _leaveCounter) / FadeTime, 0, 1);
+        _sprite.Color = Color.White * transparency;
+
+        if (percentage > 1)
         {
-            _aiComponent.ChangeState("leave");
-            _leaveStart = EntityPosition.Position;
-            _leaveEnd = _targetPosition;
+            Map.Objects.DeleteObjects.Add(this);
         }
+    }
 
-        public void FightInit()
+    private void UpdateCircling()
+    {
+        var newPosition = _centerPosition + new Vector2(
+            MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + _circlingOffset) * 1,
+            MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + 1.0f + _circlingOffset) * 2);
+        EntityPosition.Set(newPosition);
+    }
+
+    public void StartAttack()
+    {
+        _aiComponent.ChangeState("attack");
+    }
+
+    public bool IsAlive()
+    {
+        return _damageState.CurrentLives > 0;
+    }
+
+    private void InitAttack()
+    {
+        Game1.GameManager.PlaySoundEffect("D360-49-31");
+
+        _damageField.IsActive = true;
+        _hittableComponent.IsActive = true;
+
+        // fly towards the player
+        var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
+        if (direction != Vector2.Zero)
         {
-            Game1.GameManager.PlaySoundEffect("D360-49-31");
+            direction.Normalize();
+            _body.VelocityTarget = direction * AttackSpeed;
         }
+    }
 
-        private void OnBurn()
-        {
-            _body.IgnoresZ = false;
-        }
+    private void UpdateAttacking()
+    {
+        if (EntityPosition.Z > 12)
+            EntityPosition.Z -= 0.5f * Game1.TimeMultiplier;
 
-        private void UpdateSpawn()
-        {
-            UpdateFading(false);
+        var direction = _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
 
-            // move towards the target position
-            var direction = _targetPosition - EntityPosition.Position;
-            if (direction.Length() > FlySpeed * Game1.TimeMultiplier)
-            {
-                direction.Normalize();
-                _body.VelocityTarget = direction * FlySpeed;
-            }
-            else
-            {
-                // reached the target position
-                _body.VelocityTarget = Vector2.Zero;
-                EntityPosition.Set(_targetPosition);
-                _aiComponent.ChangeState("idle");
-            }
-        }
+        // fade out?
+        if (direction.Length() > 120)
+            _aiComponent.ChangeState("fadeout");
+    }
 
-        private void UpdateLeave()
-        {
-            _leaveCounter += Game1.DeltaTime;
+    private void InitFadeout()
+    {
+        _fadeCounter = 0;
+    }
 
-            var percentage = 1 - MathF.Cos(_leaveCounter / 1000 * MathF.PI / 2);
-            var newPosition = Vector2.Lerp(_leaveStart, _leaveEnd, percentage);
-            EntityPosition.Set(newPosition);
+    private void UpdateFadeout()
+    {
+        if (UpdateFading(true))
+            Map.Objects.DeleteObjects.Add(this);
+    }
 
-            // fade out
-            var transparency = Math.Clamp((1000 - _leaveCounter) / FadeTime, 0, 1);
-            _sprite.Color = Color.White * transparency;
+    private bool UpdateFading(bool fadeOut)
+    {
+        _fadeCounter += Game1.DeltaTime;
+        if (_fadeCounter > FadeTime)
+            _fadeCounter = FadeTime;
 
-            if (percentage > 1)
-            {
-                Map.Objects.DeleteObjects.Add(this);
-            }
-        }
+        var transparency = _fadeCounter / FadeTime;
+        if (fadeOut)
+            transparency = 1 - transparency;
 
-        private void UpdateCircling()
-        {
-            var newPosition = _centerPosition + new Vector2(
-                MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + _circlingOffset) * 1,
-                MathF.Sin((float)Game1.TotalGameTime / _circleSpeed + 1.0f + _circlingOffset) * 2);
-            EntityPosition.Set(newPosition);
-        }
+        _sprite.Color = Color.White * transparency;
+        _shadowComponent.Transparency = transparency;
 
-        public void StartAttack()
-        {
-            _aiComponent.ChangeState("attack");
-        }
-
-        public bool IsAlive()
-        {
-            return _damageState.CurrentLives > 0;
-        }
-
-        private void InitAttack()
-        {
-            Game1.GameManager.PlaySoundEffect("D360-49-31");
-
-            _damageField.IsActive = true;
-            _hittableComponent.IsActive = true;
-
-            // fly towards the player
-            var direction = MapManager.ObjLink.EntityPosition.Position - new Vector2(EntityPosition.X, EntityPosition.Y - 12);
-            if (direction != Vector2.Zero)
-            {
-                direction.Normalize();
-                _body.VelocityTarget = direction * AttackSpeed;
-            }
-        }
-
-        private void UpdateAttacking()
-        {
-            if (EntityPosition.Z > 12)
-                EntityPosition.Z -= 0.5f * Game1.TimeMultiplier;
-
-            var direction = _roomCenter - new Vector2(EntityPosition.X, EntityPosition.Y - EntityPosition.Z);
-
-            // fade out?
-            if (direction.Length() > 120)
-                _aiComponent.ChangeState("fadeout");
-        }
-
-        private void InitFadeout()
-        {
-            _fadeCounter = 0;
-        }
-
-        private void UpdateFadeout()
-        {
-            if (UpdateFading(true))
-                Map.Objects.DeleteObjects.Add(this);
-        }
-
-        private bool UpdateFading(bool fadeOut)
-        {
-            _fadeCounter += Game1.DeltaTime;
-            if (_fadeCounter > FadeTime)
-                _fadeCounter = FadeTime;
-
-            var transparency = _fadeCounter / FadeTime;
-            if (fadeOut)
-                transparency = 1 - transparency;
-
-            _sprite.Color = Color.White * transparency;
-            _shadowComponent.Transparency = transparency;
-
-            return _fadeCounter == FadeTime;
-        }
+        return _fadeCounter == FadeTime;
     }
 }

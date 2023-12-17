@@ -5,66 +5,65 @@ using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Things;
 using System;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+class ObjCompassSound : GameObject
 {
-    class ObjCompassSound : GameObject
+    private Rectangle _roomRectangle;
+    private Vector2 _position;
+    private readonly string _key;
+    private bool _isTriggered;
+
+    public ObjCompassSound() : base("editor compass sound") { }
+
+    public ObjCompassSound(Map.Map map, int posX, int posY, string key) : base(map)
     {
-        private Rectangle _roomRectangle;
-        private Vector2 _position;
-        private string _key;
-        private bool _isTriggered;
+        _roomRectangle = map.GetField(posX, posY);
+        var center = _roomRectangle.Center;
+        _position = new Vector2(center.X, center.Y);
+        _key = key;
 
-        public ObjCompassSound() : base("editor compass sound") { }
-
-        public ObjCompassSound(Map.Map map, int posX, int posY, string key) : base(map)
+        if (string.IsNullOrEmpty(key) ||
+            Game1.GameManager.SaveManager.GetString(_key, "0") == "1")
         {
-            _roomRectangle = map.GetField(posX, posY);
-            var center = _roomRectangle.Center;
-            _position = new Vector2(center.X, center.Y);
-            _key = key;
-
-            if (string.IsNullOrEmpty(key) ||
-                Game1.GameManager.SaveManager.GetString(_key, "0") == "1")
-            {
-                IsDead = true;
-                return;
-            }
-
-            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+            IsDead = true;
+            return;
         }
 
-        private void Update()
-        {
-            if (!_isTriggered)
-            {
-                // player walked into the room?
-                if (_roomRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
-                {
-                    _isTriggered = true;
+        AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+        AddComponent(KeyChangeListenerComponent.Index, new KeyChangeListenerComponent(KeyChanged));
+    }
 
-                    // check if the player has a compass
-                    var hasCompass = Game1.GameManager.GetItem("compass") != null;
-                    if (hasCompass)
-                        Game1.GameManager.PlaySoundEffect("D370-27-1B");
-                }
-            }
-            // reset when the player is far enough away
-            else
+    private void Update()
+    {
+        if (!_isTriggered)
+        {
+            // player walked into the room?
+            if (_roomRectangle.Contains(MapManager.ObjLink.EntityPosition.Position))
             {
-                var distance = _position - MapManager.ObjLink.EntityPosition.Position;
-                if (MathF.Abs(distance.X) > Values.FieldWidth * 0.8f ||
-                    MathF.Abs(distance.Y) > 128 * 0.8f)
-                    _isTriggered = false;
+                _isTriggered = true;
+
+                // check if the player has a compass
+                var hasCompass = Game1.GameManager.GetItem("compass") != null;
+                if (hasCompass)
+                    Game1.GameManager.PlaySoundEffect("D370-27-1B");
             }
         }
-
-        private void KeyChanged()
+        // reset when the player is far enough away
+        else
         {
-            // delete the object if the item was collected
-            var keyState = Game1.GameManager.SaveManager.GetString(_key, "0");
-            if (keyState == "1")
-                Map.Objects.DeleteObjects.Add(this);
+            var distance = _position - MapManager.ObjLink.EntityPosition.Position;
+            if (MathF.Abs(distance.X) > Values.FieldWidth * 0.8f ||
+                MathF.Abs(distance.Y) > 128 * 0.8f)
+                _isTriggered = false;
         }
+    }
+
+    private void KeyChanged()
+    {
+        // delete the object if the item was collected
+        var keyState = Game1.GameManager.SaveManager.GetString(_key, "0");
+        if (keyState == "1")
+            Map.Objects.DeleteObjects.Add(this);
     }
 }

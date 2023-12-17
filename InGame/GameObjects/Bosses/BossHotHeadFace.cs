@@ -6,69 +6,68 @@ using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 using ProjectZ.InGame.GameObjects.Base.Components.AI;
 
-namespace ProjectZ.InGame.GameObjects.Enemies
+namespace ProjectZ.InGame.GameObjects.Enemies;
+
+internal class BossHotHeadFace : GameObject
 {
-    internal class BossHotHeadFace : GameObject
+    private readonly BodyComponent _body;
+    private readonly Animator _animator;
+    private readonly AnimationComponent _animationComponent;
+    private readonly AiComponent _aiComponent;
+    private readonly CSprite _sprite;
+
+    public BossHotHeadFace(Map.Map map, Vector3 position, Vector3 velocity, string animation) : base(map)
     {
-        private readonly BodyComponent _body;
-        private readonly Animator _animator;
-        private readonly AnimationComponent _animationComponent;
-        private readonly AiComponent _aiComponent;
-        private readonly CSprite _sprite;
+        Tags = Values.GameObjectTag.Enemy;
 
-        public BossHotHeadFace(Map.Map map, Vector3 position, Vector3 velocity, string animation) : base(map)
+        EntityPosition = new CPosition(position);
+        EntitySize = new Rectangle(-8, -16, 16, 16);
+
+        _animator = AnimatorSaveLoad.LoadAnimator("Nightmares/hot head");
+        _animator.Play(animation);
+
+        _sprite = new CSprite(EntityPosition);
+        _animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
+
+        _body = new BodyComponent(EntityPosition, -5, -10, 10, 10, 8)
         {
-            Tags = Values.GameObjectTag.Enemy;
+            Gravity = -0.075f,
+            CollisionTypes = Values.CollisionTypes.None,
+            Velocity = velocity,
+            IsGrounded = false
+        };
 
-            EntityPosition = new CPosition(position);
-            EntitySize = new Rectangle(-8, -16, 16, 16);
+        _aiComponent = new AiComponent();
 
-            _animator = AnimatorSaveLoad.LoadAnimator("Nightmares/hot head");
-            _animator.Play(animation);
+        var stateFlying = new AiState(UpdateFlying);
+        var stateSplash = new AiState(UpdateSplash);
 
-            _sprite = new CSprite(EntityPosition);
-            _animationComponent = new AnimationComponent(_animator, _sprite, Vector2.Zero);
+        _aiComponent.States.Add("flying", stateFlying);
+        _aiComponent.States.Add("splash", stateSplash);
 
-            _body = new BodyComponent(EntityPosition, -5, -10, 10, 10, 8)
-            {
-                Gravity = -0.075f,
-                CollisionTypes = Values.CollisionTypes.None,
-                Velocity = velocity,
-                IsGrounded = false
-            };
+        _aiComponent.ChangeState("flying");
 
-            _aiComponent = new AiComponent();
+        AddComponent(BodyComponent.Index, _body);
+        AddComponent(AiComponent.Index, _aiComponent);
+        AddComponent(BaseAnimationComponent.Index, _animationComponent);
+        AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+    }
 
-            var stateFlying = new AiState(UpdateFlying);
-            var stateSplash = new AiState(UpdateSplash);
-
-            _aiComponent.States.Add("flying", stateFlying);
-            _aiComponent.States.Add("splash", stateSplash);
-
-            _aiComponent.ChangeState("flying");
-
-            AddComponent(BodyComponent.Index, _body);
-            AddComponent(AiComponent.Index, _aiComponent);
-            AddComponent(BaseAnimationComponent.Index, _animationComponent);
-            AddComponent(DrawComponent.Index, new DrawCSpriteComponent(_sprite, Values.LayerPlayer));
+    private void UpdateFlying()
+    {
+        if (_body.IsGrounded)
+        {
+            _body.VelocityTarget = Vector2.Zero;
+            _animator.Play("fireball_splash");
+            _aiComponent.ChangeState("splash");
         }
+    }
 
-        private void UpdateFlying()
+    private void UpdateSplash()
+    {
+        if (!_animator.IsPlaying)
         {
-            if (_body.IsGrounded)
-            {
-                _body.VelocityTarget = Vector2.Zero;
-                _animator.Play("fireball_splash");
-                _aiComponent.ChangeState("splash");
-            }
-        }
-
-        private void UpdateSplash()
-        {
-            if (!_animator.IsPlaying)
-            {
-                Map.Objects.DeleteObjects.Add(this);
-            }
+            Map.Objects.DeleteObjects.Add(this);
         }
     }
 }

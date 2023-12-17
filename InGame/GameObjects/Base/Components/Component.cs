@@ -1,8 +1,7 @@
-﻿namespace ProjectZ.InGame.GameObjects.Base.Components
+﻿namespace ProjectZ.InGame.GameObjects.Base.Components;
+
+public class Component
 {
-    public class Component
-    {
-        public GameObject Owner;
-        public static int Index;
-    }
+    public GameObject Owner;
+    public static int Index;
 }

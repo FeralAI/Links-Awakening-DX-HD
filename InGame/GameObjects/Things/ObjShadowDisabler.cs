@@ -1,19 +1,18 @@
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.GameObjects.Base;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+class ObjShadowDisabler : GameObject
 {
-    class ObjShadowDisabler : GameObject
+    public ObjShadowDisabler() : base("editor shadow disabler") { }
+
+    public ObjShadowDisabler(Map.Map map, int posX, int posY) : base(map)
     {
-        public ObjShadowDisabler() : base("editor shadow disabler") { }
+        EditorColor = Color.Red;
 
-        public ObjShadowDisabler(Map.Map map, int posX, int posY) : base(map)
-        {
-            EditorColor = Color.Red;
+        Map.UseShadows = false;
 
-            Map.UseShadows = false;
-
-            IsDead = true;
-        }
+        IsDead = true;
     }
 }

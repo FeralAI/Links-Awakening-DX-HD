@@ -5,53 +5,52 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Bosses
+namespace ProjectZ.InGame.GameObjects.Bosses;
+
+class BossFinalBossFinalTail : GameObject
 {
-    class BossFinalBossFinalTail : GameObject
+    private readonly BossFinalBoss _owner;
+
+    private readonly DrawComponent _drawComponent;
+    private readonly DamageFieldComponent _damageFieldComponent;
+
+    public readonly CSprite Sprite;
+
+    public BossFinalBossFinalTail(Map.Map map, BossFinalBoss owner, string spriteId, Vector2 position) : base(map)
     {
-        private readonly BossFinalBoss _owner;
+        Tags = Values.GameObjectTag.Enemy;
 
-        private readonly DrawComponent _drawComponent;
-        private readonly DamageFieldComponent _damageFieldComponent;
+        EntityPosition = new CPosition(position.X, position.Y, 0);
+        EntitySize = new Rectangle(-8, -8, 16, 16);
 
-        public readonly CSprite Sprite;
+        _owner = owner;
 
-        public BossFinalBossFinalTail(Map.Map map, BossFinalBoss owner, string spriteId, Vector2 position) : base(map)
-        {
-            Tags = Values.GameObjectTag.Enemy;
+        Sprite = new CSprite(spriteId, EntityPosition);
 
-            EntityPosition = new CPosition(position.X, position.Y, 0);
-            EntitySize = new Rectangle(-8, -8, 16, 16);
+        var damageCollider = new CBox(EntityPosition, -3, -3, 6, 6, 3);
+        AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
+        AddComponent(DrawComponent.Index, _drawComponent = new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
 
-            _owner = owner;
+        SetActive(false);
+    }
 
-            Sprite = new CSprite(spriteId, EntityPosition);
+    public void DeactivateDamageField()
+    {
+        _damageFieldComponent.IsActive = false;
+    }
 
-            var damageCollider = new CBox(EntityPosition, -3, -3, 6, 6, 3);
-            AddComponent(DamageFieldComponent.Index, _damageFieldComponent = new DamageFieldComponent(damageCollider, HitType.Enemy, 2));
-            AddComponent(DrawComponent.Index, _drawComponent = new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+    public void SetActive(bool state)
+    {
+        _damageFieldComponent.IsActive = state;
+        _drawComponent.IsActive = state;
+    }
 
-            SetActive(false);
-        }
+    private void Draw(SpriteBatch spriteBatch)
+    {
+        if (!_drawComponent.IsActive)
+            return;
 
-        public void DeactivateDamageField()
-        {
-            _damageFieldComponent.IsActive = false;
-        }
-
-        public void SetActive(bool state)
-        {
-            _damageFieldComponent.IsActive = state;
-            _drawComponent.IsActive = state;
-        }
-
-        private void Draw(SpriteBatch spriteBatch)
-        {
-            if (!_drawComponent.IsActive)
-                return;
-
-            Sprite.SpriteShader = _owner.Sprite.SpriteShader;
-            Sprite.Draw(spriteBatch);
-        }
+        Sprite.SpriteShader = _owner.Sprite.SpriteShader;
+        Sprite.Draw(spriteBatch);
     }
 }

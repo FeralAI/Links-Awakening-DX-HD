@@ -4,140 +4,139 @@ using Microsoft.Xna.Framework.Graphics;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.Interface
+namespace ProjectZ.InGame.Interface;
+
+public class InterfaceToggle : InterfaceElement
 {
-    public class InterfaceToggle : InterfaceElement
+    public delegate void BFunction(bool toggleState);
+    public BFunction ClickFunction;
+
+    private readonly Color _colorToggledBackground;
+    private readonly Color _colorNotToggledBackground = new(188, 188, 188);
+    private readonly Color _colorToggled;
+    private readonly Color _colorNotToggled = new(79, 79, 79);
+
+    private readonly Rectangle _toggleBackgroundRectangle;
+    private readonly Rectangle _toggleRectangle;
+
+    private float _toggleAnimationState;
+    private float _toggleAnimationCounter;
+
+    private const int ToggleAnimationTime = 100;
+
+    private bool _toggleState;
+
+    public bool ToggleState => _toggleState;
+
+    public InterfaceToggle()
     {
-        public delegate void BFunction(bool toggleState);
-        public BFunction ClickFunction;
+        Color = Values.MenuButtonColor;
+        SelectionColor = Values.MenuButtonColorSelected;
 
-        private readonly Color _colorToggledBackground;
-        private readonly Color _colorNotToggledBackground = new Color(188, 188, 188);
-        private readonly Color _colorToggled;
-        private readonly Color _colorNotToggled = new Color(79, 79, 79);
+        _colorToggledBackground = Values.MenuButtonColorSelected;
+        _colorToggled = Values.MenuButtonColorSlider;
+    }
 
-        private readonly Rectangle _toggleBackgroundRectangle;
-        private readonly Rectangle _toggleRectangle;
+    public InterfaceToggle(Point size, Point margin, bool startState, BFunction clickFunction) : this()
+    {
+        Size = size;
+        Margin = margin;
 
-        private float _toggleAnimationState;
-        private float _toggleAnimationCounter;
+        _toggleState = startState;
 
-        private const int ToggleAnimationTime = 100;
+        ClickFunction = clickFunction;
 
-        private bool _toggleState;
+        _toggleBackgroundRectangle = new Rectangle(0, 0, size.X, size.Y);
+        _toggleRectangle = new Rectangle(2, 2, size.Y - 4, size.Y - 4);
 
-        public bool ToggleState => _toggleState;
+        _toggleAnimationState = _toggleState ? 1 : 0;
+    }
 
-        public InterfaceToggle()
-        {
-            Color = Values.MenuButtonColor;
-            SelectionColor = Values.MenuButtonColorSelected;
+    public static InterfaceListLayout GetToggleButton(Point size, Point margin, string textKey, bool startState, BFunction clickFunction)
+    {
+        var toggleLayout = new InterfaceListLayout() { Size = size, Margin = margin, HorizontalMode = true, Selectable = true };
 
-            _colorToggledBackground = Values.MenuButtonColorSelected;
-            _colorToggled = Values.MenuButtonColorSlider;
-        }
+        var toggleSize = new Point((int)(size.Y * 1.75f), size.Y - 2);
+        var buttonSize = new Point(size.X - toggleSize.X - 4, size.Y);
 
-        public InterfaceToggle(Point size, Point margin, bool startState, BFunction clickFunction) : this()
-        {
-            Size = size;
-            Margin = margin;
+        var toggle = new InterfaceToggle(toggleSize, new Point(2, 0), startState, clickFunction);
+        var button = new InterfaceButton(buttonSize, new Point(2, 0), textKey, buttonElement => toggle.Toggle());
 
-            _toggleState = startState;
+        toggleLayout.AddElement(button);
+        toggleLayout.AddElement(toggle);
 
-            ClickFunction = clickFunction;
+        return toggleLayout;
+    }
 
-            _toggleBackgroundRectangle = new Rectangle(0, 0, size.X, size.Y);
-            _toggleRectangle = new Rectangle(2, 2, size.Y - 4, size.Y - 4);
+    public override InputEventReturn PressedButton(CButtons pressedButton)
+    {
+        if (!ControlHandler.ButtonPressed(CButtons.A))
+            return InputEventReturn.Nothing;
 
-            _toggleAnimationState = _toggleState ? 1 : 0;
-        }
+        Toggle();
 
-        public static InterfaceListLayout GetToggleButton(Point size, Point margin, string textKey, bool startState, BFunction clickFunction)
-        {
-            var toggleLayout = new InterfaceListLayout() { Size = size, Margin = margin, HorizontalMode = true, Selectable = true };
+        return ClickFunction != null ? InputEventReturn.Something : InputEventReturn.Nothing;
+    }
 
-            var toggleSize = new Point((int)(size.Y * 1.75f), size.Y - 2);
-            var buttonSize = new Point(size.X - toggleSize.X - 4, size.Y);
+    public void SetToggle(bool state)
+    {
+        _toggleState = state;
+        // no animation
+        _toggleAnimationCounter = 0;
+    }
 
-            var toggle = new InterfaceToggle(toggleSize, new Point(2, 0), startState, clickFunction);
-            var button = new InterfaceButton(buttonSize, new Point(2, 0), textKey, buttonElement => toggle.Toggle());
+    public void Toggle()
+    {
+        _toggleState = !_toggleState;
+        _toggleAnimationCounter = ToggleAnimationTime;
 
-            toggleLayout.AddElement(button);
-            toggleLayout.AddElement(toggle);
+        ClickFunction?.Invoke(_toggleState);
+    }
 
-            return toggleLayout;
-        }
+    public override void Update()
+    {
+        base.Update();
 
-        public override InputEventReturn PressedButton(CButtons pressedButton)
-        {
-            if (!ControlHandler.ButtonPressed(CButtons.A))
-                return InputEventReturn.Nothing;
-
-            Toggle();
-
-            return ClickFunction != null ? InputEventReturn.Something : InputEventReturn.Nothing;
-        }
-
-        public void SetToggle(bool state)
-        {
-            _toggleState = state;
-            // no animation
+        // update the toggle animation
+        _toggleAnimationCounter -= Game1.DeltaTime;
+        if (_toggleAnimationCounter <= 0)
             _toggleAnimationCounter = 0;
-        }
+        var percentage = (float)Math.Sin((1 - _toggleAnimationCounter / ToggleAnimationTime) * Math.PI / 2);
+        _toggleAnimationState = _toggleState ? percentage : 1 - percentage;
+    }
 
-        public void Toggle()
-        {
-            _toggleState = !_toggleState;
-            _toggleAnimationCounter = ToggleAnimationTime;
+    public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
+    {
+        Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
 
-            ClickFunction?.Invoke(_toggleState);
-        }
+        spriteBatch.End();
+        spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Game1.GetMatrix);
 
-        public override void Update()
-        {
-            base.Update();
+        Resources.RoundedCornerEffect.Parameters["radius"].SetValue(4.0f);
+        Resources.RoundedCornerEffect.Parameters["width"].SetValue(_toggleBackgroundRectangle.Width);
+        Resources.RoundedCornerEffect.Parameters["height"].SetValue(_toggleBackgroundRectangle.Height);
 
-            // update the toggle animation
-            _toggleAnimationCounter -= Game1.DeltaTime;
-            if (_toggleAnimationCounter <= 0)
-                _toggleAnimationCounter = 0;
-            var percentage = (float)Math.Sin((1 - _toggleAnimationCounter / ToggleAnimationTime) * Math.PI / 2);
-            _toggleAnimationState = _toggleState ? percentage : 1 - percentage;
-        }
+        // draw the toggle background
+        spriteBatch.Draw(Resources.SprWhite, new Rectangle(
+            (int)(drawPosition.X + _toggleBackgroundRectangle.X * scale),
+            (int)(drawPosition.Y + _toggleBackgroundRectangle.Y * scale),
+            (int)(_toggleBackgroundRectangle.Width * scale),
+            (int)(_toggleBackgroundRectangle.Height * scale)),
+            (_toggleState ? _colorToggledBackground : _colorNotToggledBackground) * transparency);
 
-        public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)
-        {
-            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiScale);
+        Resources.RoundedCornerEffect.Parameters["radius"].SetValue(4.0f);
+        Resources.RoundedCornerEffect.Parameters["width"].SetValue(_toggleRectangle.Width);
+        Resources.RoundedCornerEffect.Parameters["height"].SetValue(_toggleRectangle.Height);
 
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Game1.GetMatrix);
+        // draw the toggle
+        spriteBatch.Draw(Resources.SprWhite, new Rectangle(
+            (int)(drawPosition.X + (_toggleRectangle.X + _toggleAnimationState * (_toggleBackgroundRectangle.Width - _toggleRectangle.Width - 4)) * scale),
+            (int)(drawPosition.Y + _toggleRectangle.Y * scale),
+            (int)(_toggleRectangle.Width * scale),
+            (int)(_toggleRectangle.Height * scale)),
+            (_toggleState ? _colorToggled : _colorNotToggled) * transparency);
 
-            Resources.RoundedCornerEffect.Parameters["radius"].SetValue(4.0f);
-            Resources.RoundedCornerEffect.Parameters["width"].SetValue(_toggleBackgroundRectangle.Width);
-            Resources.RoundedCornerEffect.Parameters["height"].SetValue(_toggleBackgroundRectangle.Height);
-
-            // draw the toggle background
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                (int)(drawPosition.X + _toggleBackgroundRectangle.X * scale),
-                (int)(drawPosition.Y + _toggleBackgroundRectangle.Y * scale),
-                (int)(_toggleBackgroundRectangle.Width * scale),
-                (int)(_toggleBackgroundRectangle.Height * scale)),
-                (_toggleState ? _colorToggledBackground : _colorNotToggledBackground) * transparency);
-
-            Resources.RoundedCornerEffect.Parameters["radius"].SetValue(4.0f);
-            Resources.RoundedCornerEffect.Parameters["width"].SetValue(_toggleRectangle.Width);
-            Resources.RoundedCornerEffect.Parameters["height"].SetValue(_toggleRectangle.Height);
-
-            // draw the toggle
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(
-                (int)(drawPosition.X + (_toggleRectangle.X + _toggleAnimationState * (_toggleBackgroundRectangle.Width - _toggleRectangle.Width - 4)) * scale),
-                (int)(drawPosition.Y + _toggleRectangle.Y * scale),
-                (int)(_toggleRectangle.Width * scale),
-                (int)(_toggleRectangle.Height * scale)),
-                (_toggleState ? _colorToggled : _colorNotToggled) * transparency);
-
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
-        }
+        spriteBatch.End();
+        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointWrap, null, null, null, Game1.GetMatrix);
     }
 }

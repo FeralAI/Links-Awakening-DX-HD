@@ -1,16 +1,9 @@
 ﻿using System;
 
-namespace ProjectZ.InGame.GameObjects
-{
-    public class GameObjectTemplate
-    {
-        public Type ObjectType;
-        public object[] Parameter;
+namespace ProjectZ.InGame.GameObjects;
 
-        public GameObjectTemplate(Type objectType, object[] parameter)
-        {
-            ObjectType = objectType;
-            Parameter = parameter;
-        }
-    }
+public class GameObjectTemplate(Type objectType, object[] parameter)
+{
+    public Type ObjectType = objectType;
+    public object[] Parameter = parameter;
 }

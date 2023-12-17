@@ -8,169 +8,168 @@ using ProjectZ.InGame.Map;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+internal class ObjSwordSpawner : GameObject
 {
-    internal class ObjSwordSpawner : GameObject
+    private readonly Animator _animator;
+    private readonly CSprite _sprite;
+    private SpriteShader _spriteShader;
+
+    private ObjItem _objSword;
+    private BodyComponent _swordBody;
+    private bool _swordHitFloor;
+
+    private readonly DictAtlasEntry _thunder;
+
+    private float _counter;
+    private int _thunderIndex;
+    private bool _drawThunder = true;
+
+    private float _animationCounter;
+    private bool _animationStarted;
+
+    private bool _spawnedSword;
+
+    private float _thunderCounter;
+    private bool _soundEffect;
+
+    public ObjSwordSpawner() : base("sword_spawn") { }
+
+    public ObjSwordSpawner(Map.Map map, int posX, int posY) : base(map)
     {
-        private Animator _animator;
-        private CSprite _sprite;
-        private SpriteShader _spriteShader;
+        EntityPosition = new CPosition(posX + 8, posY + 8, 0);
+        EntitySize = new Rectangle(-8, -8, 16, 16);
 
-        private ObjItem _objSword;
-        private BodyComponent _swordBody;
-        private bool _swordHitFloor;
+        _animator = AnimatorSaveLoad.LoadAnimator("Objects/sword spawn");
 
-        private DictAtlasEntry _thunder;
+        _thunder = Resources.GetSprite("sword_thunder_0");
 
-        private float _counter;
-        private int _thunderIndex;
-        private bool _drawThunder = true;
+        _sprite = new CSprite(EntityPosition);
 
-        private float _animationCounter;
-        private bool _animationStarted;
+        AddComponent(BaseAnimationComponent.Index, new AnimationComponent(_animator, _sprite, Vector2.Zero));
+        AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
+        AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+    }
 
-        private bool _spawnedSword;
+    private void SpawnSword()
+    {
+        _spawnedSword = true;
+        _objSword = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y, null, "sword2", "sword2", null);
+        ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = false;
+        _swordBody = ((BodyComponent)_objSword.Components[BodyComponent.Index]);
+        _swordBody.OffsetY -= 1;
+        _swordBody.Bounciness2D = 0.5f;
+        Map.Objects.SpawnObject(_objSword);
+    }
 
-        private float _thunderCounter;
-        private bool _soundEffect;
+    private void Update()
+    {
+        _counter += Game1.DeltaTime;
+        _animationCounter += Game1.DeltaTime;
 
-        public ObjSwordSpawner() : base("sword_spawn") { }
-
-        public ObjSwordSpawner(Map.Map map, int posX, int posY) : base(map)
+        if (!_spawnedSword)
         {
-            EntityPosition = new CPosition(posX + 8, posY + 8, 0);
-            EntitySize = new Rectangle(-8, -8, 16, 16);
-
-            _animator = AnimatorSaveLoad.LoadAnimator("Objects/sword spawn");
-
-            _thunder = Resources.GetSprite("sword_thunder_0");
-
-            _sprite = new CSprite(EntityPosition);
-
-            AddComponent(BaseAnimationComponent.Index, new AnimationComponent(_animator, _sprite, Vector2.Zero));
-            AddComponent(UpdateComponent.Index, new UpdateComponent(Update));
-            AddComponent(DrawComponent.Index, new DrawComponent(Draw, Values.LayerBottom, EntityPosition));
+            MapManager.ObjLink.FreezePlayer();
+            Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
         }
 
-        private void SpawnSword()
+        if (_animationCounter > 2200 && !_soundEffect)
         {
-            _spawnedSword = true;
-            _objSword = new ObjItem(Map, (int)EntityPosition.X - 8, (int)EntityPosition.Y, null, "sword2", "sword2", null);
-            ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = false;
-            _swordBody = ((BodyComponent)_objSword.Components[BodyComponent.Index]);
-            _swordBody.OffsetY -= 1;
-            _swordBody.Bounciness2D = 0.5f;
-            Map.Objects.SpawnObject(_objSword);
+            _soundEffect = true;
+            Game1.GameManager.PlaySoundEffect("D370-30-1E");
         }
 
-        private void Update()
+        if (_drawThunder)
         {
-            _counter += Game1.DeltaTime;
-            _animationCounter += Game1.DeltaTime;
-
-            if (!_spawnedSword)
+            _thunderCounter -= Game1.DeltaTime;
+            if (_thunderCounter < 0)
             {
-                MapManager.ObjLink.FreezePlayer();
-                Game1.GameManager.InGameOverlay.DisableInventoryToggle = true;
-            }
-
-            if (_animationCounter > 2200 && !_soundEffect)
-            {
-                _soundEffect = true;
-                Game1.GameManager.PlaySoundEffect("D370-30-1E");
-            }
-
-            if (_drawThunder)
-            {
-                _thunderCounter -= Game1.DeltaTime;
-                if (_thunderCounter < 0)
-                {
-                    _thunderCounter += 66;
-                    Game1.GameManager.PlaySoundEffect("D378-51-33");
-                }
-            }
-
-            if (_animationCounter > 2750 && !_animationStarted)
-            {
-                _animationStarted = true;
-                _animator.Play("idle");
-            }
-
-            if (_drawThunder && _animationCounter > 2750 + 4500)
-            {
-                _drawThunder = false;
-                _thunderIndex = -1;
-            }
-
-            // finished playing?
-            if (_animationCounter > 2750 && !_animator.IsPlaying && !_spawnedSword)
-            {
-                SpawnSword();
-            }
-
-            _spriteShader = _counter % (AiDamageState.BlinkTime * 2) >= AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
-
-            if (_counter > AiDamageState.BlinkTime * 2)
-            {
-                _counter -= AiDamageState.BlinkTime * 2;
-                _thunderIndex += Game1.RandomNumber.Next(1, 4);
-                _thunderIndex %= 4;
-            }
-
-            if (_objSword != null && !_swordHitFloor)
-            {
-                if (_swordBody.Velocity.Y < 0)
-                {
-                    _swordHitFloor = true;
-                    ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = true;
-                }
+                _thunderCounter += 66;
+                Game1.GameManager.PlaySoundEffect("D378-51-33");
             }
         }
 
-        private void Draw(SpriteBatch spriteBatch)
+        if (_animationCounter > 2750 && !_animationStarted)
         {
-            if (_spriteShader != null)
+            _animationStarted = true;
+            _animator.Play("idle");
+        }
+
+        if (_drawThunder && _animationCounter > 2750 + 4500)
+        {
+            _drawThunder = false;
+            _thunderIndex = -1;
+        }
+
+        // finished playing?
+        if (_animationCounter > 2750 && !_animator.IsPlaying && !_spawnedSword)
+        {
+            SpawnSword();
+        }
+
+        _spriteShader = _counter % (AiDamageState.BlinkTime * 2) >= AiDamageState.BlinkTime ? Resources.DamageSpriteShader0 : null;
+
+        if (_counter > AiDamageState.BlinkTime * 2)
+        {
+            _counter -= AiDamageState.BlinkTime * 2;
+            _thunderIndex += Game1.RandomNumber.Next(1, 4);
+            _thunderIndex %= 4;
+        }
+
+        if (_objSword != null && !_swordHitFloor)
+        {
+            if (_swordBody.Velocity.Y < 0)
             {
-                spriteBatch.End();
-                ObjectManager.SpriteBatchBegin(spriteBatch, _spriteShader);
+                _swordHitFloor = true;
+                ((DrawComponent)_objSword.Components[DrawComponent.Index]).IsActive = true;
             }
+        }
+    }
 
-            // draw the blinking sword
-            if (_objSword != null && !_swordHitFloor)
-                _objSword.Draw(spriteBatch);
+    private void Draw(SpriteBatch spriteBatch)
+    {
+        if (_spriteShader != null)
+        {
+            spriteBatch.End();
+            ObjectManager.SpriteBatchBegin(spriteBatch, _spriteShader);
+        }
 
-            if (_animator.IsPlaying)
-                _sprite.Draw(spriteBatch);
+        // draw the blinking sword
+        if (_objSword != null && !_swordHitFloor)
+            _objSword.Draw(spriteBatch);
 
-            if (_drawThunder)
+        if (_animator.IsPlaying)
+            _sprite.Draw(spriteBatch);
+
+        if (_drawThunder)
+        {
+            if (_thunderIndex == 0)
             {
-                if (_thunderIndex == 0)
-                {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.None, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
-                }
-                else if (_thunderIndex == 1)
-                {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipVertically, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipHorizontally, 0);
-                }
-                else if (_thunderIndex == 2)
-                {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.None, 0);
-                }
-                else if (_thunderIndex == 3)
-                {
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 32, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipHorizontally, 0);
-                    spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 32, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipVertically, 0);
-                }
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.None, 0);
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
             }
-
-            if (_spriteShader != null)
+            else if (_thunderIndex == 1)
             {
-                spriteBatch.End();
-                ObjectManager.SpriteBatchBegin(spriteBatch, null);
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipVertically, 0);
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipHorizontally, 0);
             }
+            else if (_thunderIndex == 2)
+            {
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically, 0);
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 16, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.None, 0);
+            }
+            else if (_thunderIndex == 3)
+            {
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X + 32, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, _thunder.Origin, _thunder.Scale, SpriteEffects.FlipHorizontally, 0);
+                spriteBatch.Draw(_thunder.Texture, new Vector2(EntityPosition.X - 32, EntityPosition.Y), _thunder.ScaledRectangle, Color.White, 0, Vector2.Zero, _thunder.Scale, SpriteEffects.FlipVertically, 0);
+            }
+        }
+
+        if (_spriteShader != null)
+        {
+            spriteBatch.End();
+            ObjectManager.SpriteBatchBegin(spriteBatch, null);
         }
     }
 }

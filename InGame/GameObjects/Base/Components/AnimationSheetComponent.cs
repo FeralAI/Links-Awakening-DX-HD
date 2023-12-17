@@ -1,17 +1,11 @@
-﻿namespace ProjectZ.InGame.GameObjects.Base.Components
+﻿namespace ProjectZ.InGame.GameObjects.Base.Components;
+
+class AnimationSheetComponent(SheetAnimator animator) : BaseAnimationComponent
 {
-    class AnimationSheetComponent : BaseAnimationComponent
+    public SheetAnimator Animator = animator;
+
+    public override void UpdateAnimation()
     {
-        public SheetAnimator Animator;
-
-        public AnimationSheetComponent(SheetAnimator animator)
-        {
-            Animator = animator;
-        }
-
-        public override void UpdateAnimation()
-        {
-            Animator.Update();
-        }
+        Animator.Update();
     }
 }

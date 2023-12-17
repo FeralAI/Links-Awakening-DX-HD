@@ -1,36 +1,30 @@
 ﻿
-namespace ProjectZ.InGame.GameObjects.Base.Components.AI
+namespace ProjectZ.InGame.GameObjects.Base.Components.AI;
+
+class AiTriggerSwitch(int startTime) : AiTrigger
 {
-    class AiTriggerSwitch : AiTrigger
+    public int StartTime = startTime;
+    public double CurrentTime;
+    public bool State;
+
+    public override void OnInit()
     {
-        public int StartTime;
-        public double CurrentTime;
-        public bool State;
+        State = true;
+        CurrentTime = 0;
+    }
+    
+    public override void Update()
+    {
+        if (CurrentTime > 0)
+            CurrentTime -= Game1.DeltaTime;
 
-        public AiTriggerSwitch(int startTime)
-        {
-            StartTime = startTime;
-        }
-
-        public override void OnInit()
-        {
+        if (CurrentTime <= 0)
             State = true;
-            CurrentTime = 0;
-        }
-        
-        public override void Update()
-        {
-            if (CurrentTime > 0)
-                CurrentTime -= Game1.DeltaTime;
+    }
 
-            if (CurrentTime <= 0)
-                State = true;
-        }
-
-        public void Reset()
-        {
-            CurrentTime = StartTime;
-            State = false;
-        }
+    public void Reset()
+    {
+        CurrentTime = StartTime;
+        State = false;
     }
 }

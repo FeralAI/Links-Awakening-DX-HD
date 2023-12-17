@@ -1,28 +1,22 @@
 ﻿using System.Linq;
 
-namespace ProjectZ.Base
+namespace ProjectZ.Base;
+
+public class TickCounter(int average)
 {
-    public class TickCounter
+    public int AverageTime;
+
+    private readonly int[] _timeCounts = new int[average];
+    private int _currentIndex;
+
+    public void AddTick(long tick)
     {
-        public int AverageTime;
+        _timeCounts[_currentIndex] = (int)tick;
 
-        private readonly int[] _timeCounts;
-        private int _currentIndex;
+        _currentIndex++;
+        if (_currentIndex >= _timeCounts.Length)
+            _currentIndex = 0;
 
-        public TickCounter(int average)
-        {
-            _timeCounts = new int[average];
-        }
-
-        public void AddTick(long tick)
-        {
-            _timeCounts[_currentIndex] = (int)tick;
-
-            _currentIndex++;
-            if (_currentIndex >= _timeCounts.Length)
-                _currentIndex = 0;
-
-            AverageTime = (int)_timeCounts.Average();
-        }
+        AverageTime = (int)_timeCounts.Average();
     }
 }

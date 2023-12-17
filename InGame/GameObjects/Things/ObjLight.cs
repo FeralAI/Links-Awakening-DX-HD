@@ -5,30 +5,29 @@ using ProjectZ.InGame.GameObjects.Base.CObjects;
 using ProjectZ.InGame.GameObjects.Base.Components;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.GameObjects.Things
+namespace ProjectZ.InGame.GameObjects.Things;
+
+internal class ObjLight : GameObject
 {
-    internal class ObjLight : GameObject
+    private readonly Rectangle _drawRectangle;
+    private readonly Color _lightColor;
+
+    public ObjLight() : base("editor light") { }
+
+    public ObjLight(Map.Map map, int posX, int posY, int size, int colorR, int colorG, int colorB, int colorA, int layer) : base(map)
     {
-        private readonly Rectangle _drawRectangle;
-        private readonly Color _lightColor;
+        EntityPosition = new CPosition(posX + 8, posY + 8, 0);
+        EntitySize = new Rectangle(-size / 2, -size / 2, size, size);
 
-        public ObjLight() : base("editor light") { }
+        _drawRectangle = new Rectangle(posX + 8 - size / 2, posY + 8 - size / 2, size, size);
 
-        public ObjLight(Map.Map map, int posX, int posY, int size, int colorR, int colorG, int colorB, int colorA, int layer) : base(map)
-        {
-            EntityPosition = new CPosition(posX + 8, posY + 8, 0);
-            EntitySize = new Rectangle(-size / 2, -size / 2, size, size);
+        _lightColor = new Color(colorR, colorG, colorB) * (colorA / 255f);
 
-            _drawRectangle = new Rectangle(posX + 8 - size / 2, posY + 8 - size / 2, size, size);
+        AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = layer });
+    }
 
-            _lightColor = new Color(colorR, colorG, colorB) * (colorA / 255f);
-
-            AddComponent(LightDrawComponent.Index, new LightDrawComponent(DrawLight) { Layer = layer });
-        }
-
-        public void DrawLight(SpriteBatch spriteBatch)
-        {
-            spriteBatch.Draw(Resources.SprLight, _drawRectangle, _lightColor);
-        }
+    public void DrawLight(SpriteBatch spriteBatch)
+    {
+        spriteBatch.Draw(Resources.SprLight, _drawRectangle, _lightColor);
     }
 }

@@ -4,237 +4,227 @@ using ProjectZ.InGame.GameObjects.Base;
 using ProjectZ.InGame.SaveLoad;
 using ProjectZ.InGame.Things;
 
-namespace ProjectZ.InGame.Overlay
+namespace ProjectZ.InGame.Overlay;
+
+public class DungeonOverlay(int width, int height)
 {
-    public class DungeonOverlay
+    private RenderTarget2D _renderTarget;
+
+    private Animator _animationPlayer = new();
+
+    private Rectangle _backgroundTop = new Rectangle(0, 0, width, 20);
+    private Rectangle _backgroundBottom = new Rectangle(0, 20 + 2, width, height - 20 - 2);
+
+    private static readonly Point DungeonPoint = new(6, 0);
+
+    private Rectangle _mapRectangle = new(DungeonPoint.X, DungeonPoint.Y, 12, 20);
+    private Rectangle _compasRectangle = new(DungeonPoint.X + 12, DungeonPoint.Y, 12, 20);
+    private Rectangle _stonebreakRectangle = new(DungeonPoint.X + 24, DungeonPoint.Y, 12, 20);
+    private Rectangle _nightmareKeyPosition = new(DungeonPoint.X + 36, DungeonPoint.Y, 12, 20);
+    private Rectangle _smallKeyPosition = new(DungeonPoint.X + 48, DungeonPoint.Y, 24, 20);
+
+    private Point _recMap = new(2, 160);
+    private Point _hintMap = new(2, 170);
+    private Point _mapPosition = new(6, 24);
+
+    private readonly int _tileWidth = 8;
+    private readonly int _tileHeight = 8;
+
+    private readonly int _mapTile = 3;
+    private readonly int _undiscoveredTile = 4;
+
+    private readonly int _width = width;
+    private readonly int _height = height;
+
+    public void UpdateRenderTarget()
     {
-        private RenderTarget2D _renderTarget;
+        if (_renderTarget == null || _renderTarget.Width != _width * Game1.UiScale || _renderTarget.Height != _height * Game1.UiScale)
+            _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width * Game1.UiScale, _height * Game1.UiScale);
+    }
 
-        private Animator _animationPlayer = new Animator();
+    public void Load()
+    {
+        _animationPlayer = AnimatorSaveLoad.LoadAnimator("dungeonPlayer");
+        _animationPlayer.Play("idle");
+    }
 
-        private Rectangle _backgroundTop;
-        private Rectangle _backgroundBottom;
-
-        private static readonly Point DungeonPoint = new Point(6, 0);
-
-        private Rectangle _mapRectangle = new Rectangle(DungeonPoint.X, DungeonPoint.Y, 12, 20);
-        private Rectangle _compasRectangle = new Rectangle(DungeonPoint.X + 12, DungeonPoint.Y, 12, 20);
-        private Rectangle _stonebreakRectangle = new Rectangle(DungeonPoint.X + 24, DungeonPoint.Y, 12, 20);
-        private Rectangle _nightmareKeyPosition = new Rectangle(DungeonPoint.X + 36, DungeonPoint.Y, 12, 20);
-        private Rectangle _smallKeyPosition = new Rectangle(DungeonPoint.X + 48, DungeonPoint.Y, 24, 20);
-
-        private Point _recMap = new Point(2, 160);
-        private Point _hintMap = new Point(2, 170);
-        private Point _mapPosition = new Point(6, 24);
-
-        private int _tileWidth = 8;
-        private int _tileHeight = 8;
-
-        private int _mapTile = 3;
-        private int _undiscoveredTile = 4;
-
-        private int _width;
-        private int _height;
-
-        public DungeonOverlay(int width, int height)
+    public void OnFocus()
+    {
+        var level = 0;
+        while (true)
         {
-            _width = width;
-            _height = height;
+            var name = Game1.GameManager.MapManager.CurrentMap.LocationName + "_" + level;
+            if (!Game1.GameManager.DungeonMaps.TryGetValue(name, out var normalMap) || normalMap == null)
+                break;
 
-            _backgroundTop = new Rectangle(0, 0, width, 20);
-            _backgroundBottom = new Rectangle(0, 20 + 2, width, height - 20 - 2);
-        }
+            level++;
 
-        public void UpdateRenderTarget()
-        {
-            if (_renderTarget == null || _renderTarget.Width != _width * Game1.UiScale || _renderTarget.Height != _height * Game1.UiScale)
-                _renderTarget = new RenderTarget2D(Game1.Graphics.GraphicsDevice, _width * Game1.UiScale, _height * Game1.UiScale);
-        }
+            if (normalMap.Overrides == null)
+                continue;
 
-        public void Load()
-        {
-            _animationPlayer = AnimatorSaveLoad.LoadAnimator("dungeonPlayer");
-            _animationPlayer.Play("idle");
-        }
+            var dungeonMap = GetAlternativeMap(name) ?? normalMap;
 
-        public void OnFocus()
-        {
-            var level = 0;
-            while (true)
+            // check the override map and override unlocked tiles
+            foreach (var map in normalMap.Overrides)
             {
-                var name = Game1.GameManager.MapManager.CurrentMap.LocationName + "_" + level;
-                if (!Game1.GameManager.DungeonMaps.TryGetValue(name, out var normalMap) || normalMap == null)
-                    break;
-
-                level++;
-
-                if (normalMap.Overrides == null)
-                    continue;
-
-                var dungeonMap = GetAlternativeMap(name) ?? normalMap;
-
-                // check the override map and override unlocked tiles
-                foreach (var map in normalMap.Overrides)
-                {
-                    if (Game1.GameManager.SaveManager.GetString(map.SaveKey, "0") == "1")
-                        dungeonMap.Tiles[map.PosX, map.PosY].TileIndex = map.TileIndex;
-                }
+                if (Game1.GameManager.SaveManager.GetString(map.SaveKey, "0") == "1")
+                    dungeonMap.Tiles[map.PosX, map.PosY].TileIndex = map.TileIndex;
             }
         }
+    }
 
-        public void Update()
+    public void Update()
+    {
+        if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
+            return;
+
+        _animationPlayer.Update();
+    }
+
+    public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color)
+    {
+        if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
+            return;
+
+        spriteBatch.Draw(_renderTarget, drawPosition, color);
+    }
+
+    public void DrawOnRenderTarget(SpriteBatch spriteBatch)
+    {
+        if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
+            return;
+
+        Game1.Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
+        Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
+
+        // draw the background
+        spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiRtScale));
+
+        Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiRtScale);
+        Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
+        Resources.RoundedCornerEffect.Parameters["width"].SetValue(_width);
+
+        Resources.RoundedCornerEffect.Parameters["height"].SetValue(_backgroundTop.Height);
+        spriteBatch.Draw(Resources.SprWhite, _backgroundTop, Values.InventoryBackgroundColor);
+
+        Resources.RoundedCornerEffect.Parameters["height"].SetValue(_backgroundBottom.Height);
+        spriteBatch.Draw(Resources.SprWhite, _backgroundBottom, Values.InventoryBackgroundColor);
+
+        if (Game1.GameManager.GetItem("dmap") == null)
+            DrawBackground(spriteBatch, Point.Zero, new Rectangle(_mapRectangle.X + _mapRectangle.Width / 2, _mapRectangle.Bottom - 5, 4, 2), 1);
+        if (Game1.GameManager.GetItem("compass") == null)
+            DrawBackground(spriteBatch, Point.Zero, new Rectangle(_compasRectangle.X + _compasRectangle.Width / 2, _compasRectangle.Bottom - 5, 4, 2), 1);
+        if (Game1.GameManager.GetItem("stonebeak") == null)
+            DrawBackground(spriteBatch, Point.Zero, new Rectangle(_stonebreakRectangle.X + _stonebreakRectangle.Width / 2, _stonebreakRectangle.Bottom - 5, 4, 2), 1);
+        if (Game1.GameManager.GetItem("nightmarekey") == null)
+            DrawBackground(spriteBatch, Point.Zero, new Rectangle(_nightmareKeyPosition.X + _nightmareKeyPosition.Width / 2, _nightmareKeyPosition.Bottom - 5, 4, 2), 1);
+        if (Game1.GameManager.GetItem("smallkey") == null)
+            DrawBackground(spriteBatch, Point.Zero, new Rectangle(_smallKeyPosition.X + _smallKeyPosition.Width / 2, _smallKeyPosition.Bottom - 5, 4, 2), 1);
+
+        spriteBatch.End();
+        spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiRtScale));
+
+        var offset = new Point(0, 0);
+
+        ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dmap"), offset, _mapRectangle, 1, Color.White);
+
+        ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("compass"), offset, _compasRectangle, 1, Color.White);
+
+        ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("stonebeak"), offset, _stonebreakRectangle, 1, Color.White);
+
+        ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("nightmarekey"), offset, _nightmareKeyPosition, 1, Color.White);
+
+        ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("smallkey"), offset, _smallKeyPosition, 1, Color.White);
+
+        // draw the dungeon maps
+        var level = 0;
+        var hasMap = Game1.GameManager.GetItem("dmap") != null;
+        var hasCompass = Game1.GameManager.GetItem("compass") != null;
+
+        while (true)
         {
-            if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
-                return;
+            // does the map exist?
+            var name = Game1.GameManager.MapManager.CurrentMap.LocationName + "_" + level;
+            if (!Game1.GameManager.DungeonMaps.TryGetValue(name, out var normalMap))
+                break;
 
-            _animationPlayer.Update();
-        }
+            var dungeonMap = GetAlternativeMap(name) ?? normalMap;
 
-        public void Draw(SpriteBatch spriteBatch, Rectangle drawPosition, Color color)
-        {
-            if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
-                return;
+            var posX = _mapPosition.X + dungeonMap.OffsetX;
+            var posY = _mapPosition.Y + dungeonMap.OffsetY;
 
-            spriteBatch.Draw(_renderTarget, drawPosition, color);
-        }
+            // draw the map
+            for (var y = 0; y < dungeonMap.Tiles.GetLength(1); y++)
+                for (var x = 0; x < dungeonMap.Tiles.GetLength(0); x++)
+                {
+                    int tileIndex;
+                    // use the discovery state from the normal map
+                    if (!normalMap.Tiles[x, y].DiscoveryState && dungeonMap.Tiles[x, y].TileIndex > 4)
+                        tileIndex = hasMap ? _mapTile : _undiscoveredTile;
+                    else
+                        tileIndex = dungeonMap.Tiles[x, y].TileIndex;
 
-        public void DrawOnRenderTarget(SpriteBatch spriteBatch)
-        {
-            if (!Game1.GameManager.MapManager.CurrentMap.DungeonMode)
-                return;
+                    spriteBatch.Draw(Resources.SprMiniMap,
+                        new Rectangle(
+                            posX + x * _tileWidth, posY + y * _tileHeight,
+                            _tileWidth, _tileHeight),
+                        new Rectangle(
+                            _recMap.X + (tileIndex - 1) * (_tileWidth + 2),
+                            _recMap.Y, _tileWidth, _tileHeight), Color.White);
 
-            Game1.Graphics.GraphicsDevice.SetRenderTarget(_renderTarget);
-            Game1.Graphics.GraphicsDevice.Clear(Color.Transparent);
-
-            // draw the background
-            spriteBatch.Begin(SpriteSortMode.Immediate, null, null, null, null, Resources.RoundedCornerEffect, Matrix.CreateScale(Game1.UiRtScale));
-
-            Resources.RoundedCornerEffect.Parameters["scale"].SetValue(Game1.UiRtScale);
-            Resources.RoundedCornerEffect.Parameters["radius"].SetValue(3f);
-            Resources.RoundedCornerEffect.Parameters["width"].SetValue(_width);
-
-            Resources.RoundedCornerEffect.Parameters["height"].SetValue(_backgroundTop.Height);
-            spriteBatch.Draw(Resources.SprWhite, _backgroundTop, Values.InventoryBackgroundColor);
-
-            Resources.RoundedCornerEffect.Parameters["height"].SetValue(_backgroundBottom.Height);
-            spriteBatch.Draw(Resources.SprWhite, _backgroundBottom, Values.InventoryBackgroundColor);
-
-            if (Game1.GameManager.GetItem("dmap") == null)
-                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_mapRectangle.X + _mapRectangle.Width / 2, _mapRectangle.Bottom - 5, 4, 2), 1);
-            if (Game1.GameManager.GetItem("compass") == null)
-                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_compasRectangle.X + _compasRectangle.Width / 2, _compasRectangle.Bottom - 5, 4, 2), 1);
-            if (Game1.GameManager.GetItem("stonebeak") == null)
-                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_stonebreakRectangle.X + _stonebreakRectangle.Width / 2, _stonebreakRectangle.Bottom - 5, 4, 2), 1);
-            if (Game1.GameManager.GetItem("nightmarekey") == null)
-                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_nightmareKeyPosition.X + _nightmareKeyPosition.Width / 2, _nightmareKeyPosition.Bottom - 5, 4, 2), 1);
-            if (Game1.GameManager.GetItem("smallkey") == null)
-                DrawBackground(spriteBatch, Point.Zero, new Rectangle(_smallKeyPosition.X + _smallKeyPosition.Width / 2, _smallKeyPosition.Bottom - 5, 4, 2), 1);
-
-            spriteBatch.End();
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp, null, null, null, Matrix.CreateScale(Game1.UiRtScale));
-
-            var offset = new Point(0, 0);
-
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("dmap"), offset, _mapRectangle, 1, Color.White);
-
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("compass"), offset, _compasRectangle, 1, Color.White);
-
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("stonebeak"), offset, _stonebreakRectangle, 1, Color.White);
-
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("nightmarekey"), offset, _nightmareKeyPosition, 1, Color.White);
-
-            ItemDrawHelper.DrawItemWithInfo(spriteBatch, Game1.GameManager.GetItem("smallkey"), offset, _smallKeyPosition, 1, Color.White);
-
-            // draw the dungeon maps
-            var level = 0;
-            var hasMap = Game1.GameManager.GetItem("dmap") != null;
-            var hasCompass = Game1.GameManager.GetItem("compass") != null;
-
-            while (true)
-            {
-                // does the map exist?
-                var name = Game1.GameManager.MapManager.CurrentMap.LocationName + "_" + level;
-                if (!Game1.GameManager.DungeonMaps.TryGetValue(name, out var normalMap))
-                    break;
-
-                var dungeonMap = GetAlternativeMap(name) ?? normalMap;
-
-                var posX = _mapPosition.X + dungeonMap.OffsetX;
-                var posY = _mapPosition.Y + dungeonMap.OffsetY;
-
-                // draw the map
-                for (var y = 0; y < dungeonMap.Tiles.GetLength(1); y++)
-                    for (var x = 0; x < dungeonMap.Tiles.GetLength(0); x++)
+                    // draw the hints on the map if the player has a compass
+                    if (hasCompass)
                     {
-                        int tileIndex;
-                        // use the discovery state from the normal map
-                        if (!normalMap.Tiles[x, y].DiscoveryState && dungeonMap.Tiles[x, y].TileIndex > 4)
-                            tileIndex = hasMap ? _mapTile : _undiscoveredTile;
-                        else
-                            tileIndex = dungeonMap.Tiles[x, y].TileIndex;
+                        tileIndex = dungeonMap.Tiles[x, y].HintTileIndex;
 
-                        spriteBatch.Draw(Resources.SprMiniMap,
-                            new Rectangle(
-                                posX + x * _tileWidth, posY + y * _tileHeight,
-                                _tileWidth, _tileHeight),
-                            new Rectangle(
-                                _recMap.X + (tileIndex - 1) * (_tileWidth + 2),
-                                _recMap.Y, _tileWidth, _tileHeight), Color.White);
-
-                        // draw the hints on the map if the player has a compass
-                        if (hasCompass)
+                        if (tileIndex > 0)
                         {
-                            tileIndex = dungeonMap.Tiles[x, y].HintTileIndex;
+                            // chest opened or boss defeated?
+                            if (Game1.GameManager.SaveManager.GetString(dungeonMap.Tiles[x, y].HintKey) == "1")
+                                continue;
+                            //tileIndex += 1;
 
-                            if (tileIndex > 0)
-                            {
-                                // chest opened or boss defeated?
-                                if (Game1.GameManager.SaveManager.GetString(dungeonMap.Tiles[x, y].HintKey) == "1")
-                                    continue;
-                                //tileIndex += 1;
-
-                                spriteBatch.Draw(Resources.SprMiniMap,
-                                    new Rectangle(
-                                        posX + x * _tileWidth, posY + y * _tileHeight,
-                                        _tileWidth, _tileHeight),
-                                    new Rectangle(
-                                        _hintMap.X + (tileIndex - 1) * (_tileWidth + 2),
-                                        _hintMap.Y, _tileWidth, _tileHeight), Color.White);
-                            }
+                            spriteBatch.Draw(Resources.SprMiniMap,
+                                new Rectangle(
+                                    posX + x * _tileWidth, posY + y * _tileHeight,
+                                    _tileWidth, _tileHeight),
+                                new Rectangle(
+                                    _hintMap.X + (tileIndex - 1) * (_tileWidth + 2),
+                                    _hintMap.Y, _tileWidth, _tileHeight), Color.White);
                         }
                     }
-
-                // draw the position indicator
-                if (Game1.GameManager.MapManager.CurrentMap.LocationFullName == name)
-                {
-                    var position = new Vector2(
-                        posX + Game1.GameManager.PlayerDungeonPosition.X * 8 + 1,
-                        posY + Game1.GameManager.PlayerDungeonPosition.Y * 8 + 1);
-                    _animationPlayer.Draw(spriteBatch, position, Color.White);
                 }
 
-                level++;
+            // draw the position indicator
+            if (Game1.GameManager.MapManager.CurrentMap.LocationFullName == name)
+            {
+                var position = new Vector2(
+                    posX + Game1.GameManager.PlayerDungeonPosition.X * 8 + 1,
+                    posY + Game1.GameManager.PlayerDungeonPosition.Y * 8 + 1);
+                _animationPlayer.Draw(spriteBatch, position, Color.White);
             }
 
-            spriteBatch.End();
+            level++;
         }
 
-        private GameManager.MiniMap GetAlternativeMap(string name)
-        {
-            // this allows for map file switching by adding a postfix to the dungeon name
-            var mapName = name + Game1.GameManager.SaveManager.GetString(name + "_map", "");
-            Game1.GameManager.DungeonMaps.TryGetValue(mapName, out var altMap);
+        spriteBatch.End();
+    }
 
-            return altMap;
-        }
+    private GameManager.MiniMap GetAlternativeMap(string name)
+    {
+        // this allows for map file switching by adding a postfix to the dungeon name
+        var mapName = name + Game1.GameManager.SaveManager.GetString(name + "_map", "");
+        Game1.GameManager.DungeonMaps.TryGetValue(mapName, out var altMap);
 
-        private void DrawBackground(SpriteBatch spriteBatch, Point offset, Rectangle rectangle, float radius)
-        {
-            Resources.RoundedCornerEffect.Parameters["radius"].SetValue(radius);
-            Resources.RoundedCornerEffect.Parameters["width"].SetValue(rectangle.Width);
-            Resources.RoundedCornerEffect.Parameters["height"].SetValue(rectangle.Height);
+        return altMap;
+    }
 
-            spriteBatch.Draw(Resources.SprWhite, new Rectangle(offset.X + rectangle.X, offset.Y + rectangle.Y, rectangle.Width, rectangle.Height), Color.Black * 0.25f);
-        }
+    private void DrawBackground(SpriteBatch spriteBatch, Point offset, Rectangle rectangle, float radius)
+    {
+        Resources.RoundedCornerEffect.Parameters["radius"].SetValue(radius);
+        Resources.RoundedCornerEffect.Parameters["width"].SetValue(rectangle.Width);
+        Resources.RoundedCornerEffect.Parameters["height"].SetValue(rectangle.Height);
+
+        spriteBatch.Draw(Resources.SprWhite, new Rectangle(offset.X + rectangle.X, offset.Y + rectangle.Y, rectangle.Width, rectangle.Height), Color.Black * 0.25f);
     }
 }
