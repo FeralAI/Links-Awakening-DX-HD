@@ -48,20 +48,21 @@ public class PageManager
         _width = Values.MinWidth - 32;
         _height = Values.MinHeight - 32;
 
-        AddPage(new MainMenuPage(_width, _height));
-        AddPage(new CopyPage(_width, _height));
-        AddPage(new CopyConfirmationPage(_width, _height));
-        AddPage(new DeleteSaveSlotPage(_width, _height));
-        AddPage(new NewGamePage(_width, _height));
-        AddPage(new SettingsPage(_width, _height));
-        AddPage(new GameSettingsPage(_width, _height));
-        //AddPage(new AudioSettingsPage(_width, _height));
-        AddPage(new ControlSettingsPage(_width, _height));
-        AddPage(new GraphicSettingsPage(_width, _height));
-        AddPage(new GameMenuPage(_width, _height));
-        AddPage(new ExitGamePage(_width, _height));
-        AddPage(new GameOverPage(_width, _height));
-    }
+            AddPage(new MainMenuPage(_width, _height));
+            AddPage(new CopyPage(_width, _height));
+            AddPage(new CopyConfirmationPage(_width, _height));
+            AddPage(new DeleteSaveSlotPage(_width, _height));
+            AddPage(new NewGamePage(_width, _height));
+            AddPage(new SettingsPage(_width, _height));
+            AddPage(new GameSettingsPage(_width, _height));
+            //AddPage(new AudioSettingsPage(_width, _height));
+            AddPage(new ControlSettingsPage(_width, _height));
+            AddPage(new GraphicSettingsPage(_width, _height));
+            AddPage(new GameMenuPage(_width, _height));
+            AddPage(new ExitGamePage(_width, _height));
+            AddPage(new GameOverPage(_width, _height));
+            AddPage(new QuitGamePage(_width, _height));
+        }
 
     public virtual void Update(GameTime gameTime)
     {

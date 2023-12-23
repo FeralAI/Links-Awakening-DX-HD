@@ -171,19 +171,32 @@ class MainMenuPage : InterfacePage
                 Selectable = true
             };
 
-            var smallButtonLayout = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
-            smallButtonLayout.AddElement(new InterfaceLabel("main_menu_settings") { Gravity = InterfaceElement.Gravities.Center });
-            _menuBottomBar.AddElement(new InterfaceButton
-            {
-                Size = new Point(smallButtonWidth, buttonHeight),
-                InsideElement = smallButtonLayout,
-                Margin = new Point(smallButtonMargin, 2),
-                ClickFunction = element =>
+                var smallButtonLayout = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
+                smallButtonLayout.AddElement(new InterfaceLabel("main_menu_settings") { Gravity = InterfaceElement.Gravities.Center });
+                _menuBottomBar.AddElement(new InterfaceButton
                 {
-                    Game1.UiPageManager.ChangePage(typeof(SettingsPage));
-                }
-            });
-        }
+                    Size = new Point(smallButtonWidth, buttonHeight),
+                    InsideElement = smallButtonLayout,
+                    Margin = new Point(smallButtonMargin, 2),
+                    ClickFunction = element =>
+                    {
+                        Game1.UiPageManager.ChangePage(typeof(SettingsPage));
+                    }
+                });
+
+                var smallButtonLayout2 = new InterfaceGravityLayout { Size = new Point(smallButtonWidth, buttonHeight) };
+                smallButtonLayout2.AddElement(new InterfaceLabel("main_menu_quit") { Gravity = InterfaceElement.Gravities.Center });
+                _menuBottomBar.AddElement(new InterfaceButton
+                {
+                    Size = new Point(smallButtonWidth, buttonHeight),
+                    InsideElement = smallButtonLayout2,
+                    Margin = new Point(smallButtonMargin, 2),
+                    ClickFunction = element =>
+                    {
+                        Game1.UiPageManager.ChangePage(typeof(QuitGamePage));
+                    }
+                });
+            }
 
         // main layout
         {
