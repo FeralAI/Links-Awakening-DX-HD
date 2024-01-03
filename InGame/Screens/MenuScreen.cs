@@ -116,6 +116,7 @@ public class MenuScreen(string screenId) : Screen(screenId)
             switch (Game1.LanguageManager.CurrentLanguageIndex)
             {
                 case 0: backHelp = backStr + " Back"; break;
+                case 1: backHelp = backStr + " Atrás"; break;
                 // add cases for each language...
             }
 
@@ -135,6 +136,7 @@ public class MenuScreen(string screenId) : Screen(screenId)
             switch (Game1.LanguageManager.CurrentLanguageIndex)
             {
                 case 0: inputHelper = selectStr + " Select"; break;
+                case 1: inputHelper = selectStr + " Elegir"; break;
                 // add cases for each language...
             }
 

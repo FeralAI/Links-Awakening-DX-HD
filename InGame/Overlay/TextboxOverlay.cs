@@ -561,6 +561,7 @@ public class TextboxOverlay
             switch (Game1.LanguageManager.CurrentLanguageIndex)
             {
                 case 0: inputString = inputString.Replace("[NAME]", "Thief"); break;
+                case 1: inputString = inputString.Replace("[NAME]", "Ladrón"); break;
                 // add cases for each language...
             }
         }
