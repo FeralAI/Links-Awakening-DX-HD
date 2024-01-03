@@ -32,7 +32,7 @@ class GraphicSettingsPage : InterfacePage
                 GameSettings.GameScale = number;
                 Game1.ScaleSettingChanged = true;
             })
-        { SetString = number => GameSettings.GameScale == 11 ? "auto" : " x" + (number < 1 ? "1/" + (2 - number) : number.ToString()) });
+        { SetString = number => GameSettings.GameScale == 11 ? " auto" : " x" + (number < 1 ? "1/" + (2 - number) : number.ToString()) });
 
         //contentLayout.AddElement(_uiScaleSlider = new InterfaceSlider(Resources.GameFont, "settings_graphics_ui_scale",
         //    buttonWidth, new Point(1, 2), 1, Game1.ScreenScale + 1, 1, GameSettings.UiScale - 1,
