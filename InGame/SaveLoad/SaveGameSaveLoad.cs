@@ -93,6 +93,7 @@ public class SaveGameSaveLoad
         saveManager.SetInt("ocarinaSong", gameManager.SelectedOcarinaSong);
         saveManager.SetInt("guardianAcornCount", gameManager.GuardianAcornCount);
         saveManager.SetInt("pieceOfPowerCount", gameManager.PieceOfPowerCount);
+        saveManager.SetBool("hasstolen", gameManager.HasStolen);
 
         saveManager.SetBool("debugMode", gameManager.DebugMode);
 
@@ -191,6 +192,7 @@ public class SaveGameSaveLoad
         gameManager.GuardianAcornCount = saveManager.GetInt("guardianAcornCount", 0);
         gameManager.PieceOfPowerCount = saveManager.GetInt("pieceOfPowerCount", 0);
         gameManager.DeathCount = saveManager.GetInt("deathCount", 0);
+        gameManager.HasStolen = saveManager.GetBool("hasstolen", false);
 
         gameManager.DebugMode = saveManager.GetBool("debugMode", false);
 
