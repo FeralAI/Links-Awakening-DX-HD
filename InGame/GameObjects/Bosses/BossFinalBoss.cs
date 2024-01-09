@@ -1680,7 +1680,7 @@ namespace ProjectZ.InGame.GameObjects.Bosses
             }
 
             // ganon damage form
-            if (_ganonForm && !_aiDamageState.IsInDamageState() && (((damageType & HitType.PegasusBootsSword) != 0) || (damageType & HitType.SwordSpin) != 0)) // gatordile - original hit types
+            if (_ganonForm && !_aiDamageState.IsInDamageState() && (damageType & HitType.PegasusBootsSword) != 0)
             {
                 _ganonLives -= damage;
                 if (_ganonLives <= 0)
