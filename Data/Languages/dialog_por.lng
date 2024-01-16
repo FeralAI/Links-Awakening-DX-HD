@@ -6,7 +6,7 @@ stonebeak Você encontrou um Bico de Pedra!\nVamos encontrar a estátua da coruj
 
 sword1 Você encontrou sua Espada! Deve ser sua, pois tem seu nome gravado nela!
 feather Você obteve a Pena de Roca! Parece que seu corpo está bem mais leve!
-pegasusBoots Você obteve as Botas de Pégasus! Se segurar o Botão, você pode correr!
+pegasusBoots Você obteve as Botas de Pégasos! Se segurar o Botão, você pode correr!
 flippers Você obteve os Nadadeiras! Se pressionar o Botão B enquanto nada, você pode mergulhar!
 bracelet0 Você encontrou o Bracelete do Poder! Finalmente, você pode pegar vasos e pedras!
 bracelet1 Você obteve um Bracelete Poderoso! Agora, você quase pode levantar uma baleia!
@@ -827,7 +827,7 @@ beak_d5_2 Mergulhe onde os feixes de luz das tochas se cruzam...
 master_stalfos_0 Arrgh! Eu não posso te vencer! Eu estou fora daqui!
 master_stalfos_1 Glup! Você me encontrou! \nVocê é um garoto muito irritante, sabia disso?!
 master_stalfos_2 Você de novo?! Você continua indo e indo... Eu não consigo resistir a você! \nTudo bem, vamos fazer isso!
-master_stalfos_3 'Eu peguei o que estava dentro desta caixa. Venha pegar, se puder!' Mestre µ
+master_stalfos_3 'Eu peguei o que estava dentro desta caixa. Venha pegar, se puder!' Ass: Mestre µ
 
 slime_eel_0 Ssso... você é o forasteiro, vindo acordar o Peixe do Vento... KEEE-HEE-HEEEH! \nEu vou te comer!
 slime_eel_1 TSSSK, TSSSK! Você não parece saber que tipo de ilha é esta... KEEE-HEEE-HEEE! Que tolo... KEE-HEE-HEH!!
