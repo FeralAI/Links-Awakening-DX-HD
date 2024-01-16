@@ -1,4 +1,4 @@
-main_menu_select_header Selecao de jogador
+main_menu_select_header Seleção de jogador
 main_menu_bottom_header 
 main_menu_new_game Novo jogo
 main_menu_settings Configurar
@@ -8,11 +8,11 @@ main_menu_quit Sair
 
 main_menu_delete_confirmation_header Apagar jogo salvo?
 main_menu_delete_confirmation_header_yes Sim
-main_menu_delete_confirmation_header_no No
+main_menu_delete_confirmation_header_no Não
 
 main_menu_copy_confirmation_header Copiar jogo salvo?
 main_menu_copy_confirmation_header_yes Sim
-main_menu_copy_confirmation_header_no No
+main_menu_copy_confirmation_header_no Não
 
 main_menu_copy_header Copiar jogo salvo
 main_menu_copy_from De
@@ -31,7 +31,7 @@ game_menu_settings Configurar
 game_menu_exit_to_the_menu Sair para o menu
 
 game_menu_exit_header Tem certeza?
-game_menu_exit_no No
+game_menu_exit_no Não
 game_menu_exit_yes Sim
 
 gameover_header Fim de jogo
@@ -40,20 +40,20 @@ gameover_quit Sair
 
 settings_menu_header Configurar
 settings_menu_game Jogo
-settings_menu_audio udio
+settings_menu_audio Áudio
 settings_menu_controls Controles
-settings_menu_video Vdeo
+settings_menu_video Vídeo
 settings_menu_back Voltar
 
-settings_audio_header Configurar audio
-settings_audio_music_volume Volume da msica:
+settings_audio_header Configurar áudio
+settings_audio_music_volume Volume da música:
 settings_audio_effect_volume Volume dos efeitos:
 
-settings_game_header Configurar Jogo
-settings_game_language Idioma: Portugus
+settings_game_header Configurar jogo
+settings_game_language Idioma: Português
 settings_game_change_language Mudar idioma
-settings_game_autosave Salvamento automtico
-settings_game_change_smooth_camera Cmera suave
+settings_game_autosave Salvamento automático
+settings_game_change_smooth_camera Câmera suave
 settings_game_fullscreen_windowed Janela sem bordas
 settings_game_fullscreen_mode Tela cheia
 
@@ -74,7 +74,7 @@ settings_controls_L L
 settings_controls_R R
 settings_controls_reset Reiniciar
 
-settings_graphics_header Configurar video
+settings_graphics_header Configurar vídeo
 settings_graphics_game_scale Escala do jogo:
 settings_graphics_ui_scale Escala da interface:
 settings_graphics_shadow Sombras
@@ -82,4 +82,4 @@ settings_graphics_fps_lock Travar FPS
 
 map_overlay_close Fechar
 overlay_map Mapa
-overlay_inventory Inventrio
+overlay_inventory Inventário
