@@ -1649,7 +1649,7 @@ class BossFinalBoss : GameObject
         }
 
         // ganon damage form
-        if (_ganonForm && !_aiDamageState.IsInDamageState() && (damageType & HitType.PegasusBootsSword) != 0)
+        if (_ganonForm && !_aiDamageState.IsInDamageState() && (((damageType & HitType.PegasusBootsSword) != 0) || (damageType & HitType.SwordSpin) != 0)) // gatordile - original hit types
         {
             _ganonLives -= damage;
             if (_ganonLives <= 0)
