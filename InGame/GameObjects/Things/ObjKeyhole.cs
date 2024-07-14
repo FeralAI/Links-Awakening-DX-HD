@@ -28,6 +28,7 @@ internal class ObjKeyhole : GameObject
         _itemName = itemName;
         _outputKey = outputKey;
         _strDialog = strDialog;
+		if (_strDialog == "keyhole_3") _itemName = "dkey4"; // gatordile - fix face key skip - there may be better approach but the itemName is just getting pulled wrong
 
         // check if the lock was already activated
         if (_itemName == null || string.IsNullOrEmpty(_outputKey) ||
