@@ -1,7 +1,6 @@
 # Links Awakening DX HD
 
-This is an **unaffiliated fork** off [Link's Awakening DX HD](https://linksawakeningdxhd.itch.io/links-awakening-dx-hd). Currently it's just slightly easier to build/publish than the itch.io version.
-
+This is an **unaffiliated fork** off [Link's Awakening DX HD](https://linksawakeningdxhd.itch.io/links-awakening-dx-hd). This fork is more focused on upgrading some of the game visuals that didn't translate to HD very well and making them better in general tho maybe not as faithful. Making the game code a little bit cleaner, updating some of the game components, and fixing some of the bugs that were published that the devs didn't get to fix. 
 Check the [wiki](https://github.com/ihm-tswow/Links-Awakening-DX-HD/wiki) for a brief documentation of the in-game tools.
 
 ## Prerequisites
