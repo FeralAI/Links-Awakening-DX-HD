@@ -330,7 +330,6 @@ public partial class ObjLink : GameObject
 
     private double _instrumentPickupTime;
     private float _instrumentCounter;
-    private readonly float _instrumentEndTime;
     private int _instrumentIndex;
     private readonly int _instrumentCycleTime = 1000;
     private bool _drawInstrumentEffect;
@@ -1081,7 +1080,7 @@ public partial class ObjLink : GameObject
 
         if (_instrumentCounter < timeOffset ||
             (CurrentState != State.ShowInstrumentPart1 || _drawInstrumentEffect) &&
-            ((_instrumentCounter - timeOffset) / _instrumentCycleTime + 1) * _instrumentCycleTime + timeOffset > _instrumentEndTime)
+            ((_instrumentCounter - timeOffset) / _instrumentCycleTime + 1) * _instrumentCycleTime + timeOffset > 0)
             return;
 
         var time = (_instrumentCounter + timeOffset) % _instrumentCycleTime;

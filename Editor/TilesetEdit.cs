@@ -45,7 +45,6 @@ internal class TilesetEdit(string screenId) : InGame.Screens.Screen(screenId)
     private int _currentSelection;
     private int _selctionEnd;
     private readonly int _tileSize = 16;
-    public int[,] SelectedTiles;
     private readonly int _outputWidth = 15;
     private int _outputHeight;
 

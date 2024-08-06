@@ -104,7 +104,7 @@ public class InterfaceSlider : InterfaceElement
         Start = start;
         End = end;
 
-        _steps = steps;
+        _steps = End - Start + 1;
         _stepWidth = (_sliderBackgroundRectangle.Width - 4) / ((float)_steps - 1);
     }
 

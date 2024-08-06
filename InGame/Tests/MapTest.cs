@@ -27,12 +27,6 @@ public class MapTest
 
     private float _counter;
     private readonly float ChangeTime = 25;
-    private readonly bool _hasDug;
-    private readonly bool _hasBombed;
-    private readonly bool _hasSpawnedBalls;
-
-    private bool _isRunning;
-    private readonly bool _paused = true;
 
     public MapTest()
     {
@@ -49,7 +43,6 @@ public class MapTest
 
     private void Start()
     {
-        _isRunning = true;
         _counter = ChangeTime;
 
         Game1.ScreenManager.ChangeScreen(Values.ScreenNameGame);

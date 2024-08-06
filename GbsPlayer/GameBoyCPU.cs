@@ -62,8 +62,6 @@ public partial class GameBoyCPU
     private float updateCycleCounter;
     private float maxPlayCycles = maxPlayCycles60;
     private int currentInstruction;
-
-    private double updateCount;
     private bool _finishedInit;
     private bool _calledPlay;
 
@@ -120,7 +118,6 @@ public partial class GameBoyCPU
         _memory.Init();
         _gbSound.Init();
 
-        updateCount = 0;
         cycleCount = 0;
         lastCycleCount = 0;
 

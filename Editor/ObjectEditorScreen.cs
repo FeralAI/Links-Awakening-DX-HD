@@ -65,7 +65,6 @@ class ObjectEditorScreen(EditorCamera camera)
         (InputHandler.MousePosition().X - _camera.Location.X) / (int)(Values.TileSize * _camera.Scale),
         (InputHandler.MousePosition().Y - _camera.Location.Y) / (int)(Values.TileSize * _camera.Scale));
 
-    private readonly int _currentLayer;
     private readonly int _leftToolbarWidth = 200;
     private readonly int _rightToolbarWidth = 250;
 
@@ -605,7 +604,7 @@ class ObjectEditorScreen(EditorCamera camera)
             {
                 SetMapObject(
                     x * Values.TileSize / gridSize,
-                    y * Values.TileSize / gridSize, _currentLayer, GetObjectIndex(), GetObjectParameter());
+                    y * Values.TileSize / gridSize, 0, GetObjectIndex(), GetObjectParameter());
             }
     }
 
@@ -614,7 +613,7 @@ class ObjectEditorScreen(EditorCamera camera)
         // draw or delete
         SetMapObject(
             ObjectCursor.X * Values.TileSize / gridSize,
-            ObjectCursor.Y * Values.TileSize / gridSize, _currentLayer, GetObjectIndex(), GetObjectParameter());
+            ObjectCursor.Y * Values.TileSize / gridSize, 0, GetObjectIndex(), GetObjectParameter());
     }
 
     private void SetMapObject(int x, int y, int z, string index, object[] parameter)
