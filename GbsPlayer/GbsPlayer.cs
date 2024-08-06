@@ -22,7 +22,8 @@ public class GbsPlayer
     private bool _exitThread;
 
     private Thread _updateThread;
-
+	
+	private bool _isPaused;
     public GbsPlayer()
     {
         SoundGenerator = new Sound();
@@ -99,18 +100,21 @@ public class GbsPlayer
     public void Play()
     {
         Cpu.IsRunning = true;
+		_isPaused = false;
     }
 
     public void Pause()
     {
         SoundGenerator.Pause();
         Cpu.IsRunning = false;
+		_isPaused = true;
     }
 
     public void Resume()
     {
         SoundGenerator.Resume();
         Cpu.IsRunning = true;
+		_isPaused = false;
     }
 
     public void Stop()
@@ -118,6 +122,7 @@ public class GbsPlayer
         // stop music playback
         SoundGenerator.Stop();
         Cpu.IsRunning = false;
+		_isPaused = true;
     }
 
     public float GetVolume()
@@ -167,4 +172,9 @@ public class GbsPlayer
             Thread.Sleep(5);
         }
     }
+	
+	public bool IsPaused()
+	{
+	    return _isPaused;
+	}
 }

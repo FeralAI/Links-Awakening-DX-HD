@@ -93,8 +93,6 @@ internal class MapTransitionSystem : GameSystem
 
         if (CurrentState != TransitionState.Idle)
             Game1.GameManager.InGameOverlay.DisableOverlayToggle = true;
-        else
-            Game1.GbsPlayer.SetVolumeMultiplier(1);
 
         if (CurrentState == TransitionState.TransitionOut)
         {
@@ -108,7 +106,7 @@ internal class MapTransitionSystem : GameSystem
                 Game1.GameManager.DrawPlayerOnTopPercentage = percentage;
 
             // slowly lower the volume of the music
-            var newVolume = 1 - MathHelper.Clamp(transitionState, 0, 1);
+            var newVolume = 1 - percentage;
             Game1.GbsPlayer.SetVolumeMultiplier(newVolume);
 
             if (_wobbleTransitionOut)
@@ -161,11 +159,6 @@ internal class MapTransitionSystem : GameSystem
             // update the position of the player to walk into the new room
             var percentage = MathHelper.Clamp(_changeMapCount / ChangeMapTime, 0, 1);
             MapManager.ObjLink.UpdateMapTransitionIn(1 - (float)(Math.Sin(percentage * 1.1) / Math.Sin(1.1)));
-
-            // slowly increase the volume of the music; the music is only playing
-            var newVolume = 1 - percentage;
-            if (Game1.GbsPlayer.GetVolumeMultiplier() < 1)
-                Game1.GbsPlayer.SetVolumeMultiplier(newVolume);
 
             if (!_wobbleTransitionOut && !_knockoutTransition && !_introTransition)
                 Game1.GameManager.DrawPlayerOnTopPercentage = percentage;

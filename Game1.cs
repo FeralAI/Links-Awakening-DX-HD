@@ -211,6 +211,8 @@ public class Game1 : Game
         // not sure how to copy the files in the correct directory...
         Content.RootDirectory += "/bin/MacOSX";
 #endif
+        // game control stuff
+		ControlHandler.Initialize();
 
         // load game settings
         SettingsSaveLoad.LoadSettings();
@@ -227,9 +229,6 @@ public class Game1 : Game
 
         // Input Handler
         Components.Add(new InputHandler(this));
-
-        // game control stuff
-        ControlHandler.Initialize();
 
         // load the intro screen + the resources needed for it
         Resources.LoadIntro(Graphics.GraphicsDevice, Content);

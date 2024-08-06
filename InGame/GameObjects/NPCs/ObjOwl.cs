@@ -194,7 +194,7 @@ internal class ObjOwl : GameObject
 
         // start playing owl music; not in the final scene
         if (Game1.GameManager.GetCurrentMusic() != 88)
-            Game1.GameManager.SetMusic(33, 2);
+            Game1.GameManager.FadeOutAndSetMusic(33, 2);
 
         MapManager.ObjLink.FreezePlayer();
         _wasTriggered = true;
@@ -313,8 +313,9 @@ internal class ObjOwl : GameObject
             _animator.SpeedMultiplier = 1.5f;
         }
 
-        // stop playing music
-        Game1.GameManager.SetMusic(-1, 2);
+        // stop playing owl music; not in the final scene
+        if (Game1.GameManager.GetCurrentMusic() != 88)
+            Game1.GameManager.FadeOutAndSetMusic(-1, 2);
     }
 
     private void UpdateLeave()

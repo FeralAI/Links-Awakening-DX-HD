@@ -21,7 +21,7 @@ internal class ObjAlligator : GameObject
 
     private Vector2 _canPosition;
     private Vector2 _canVelocity;
-    private readonly float _canGravity = 0.035f;
+    private readonly float _canGravity = 0.025f;
     private bool _isCanActive;
     private bool _isEating;
 
@@ -79,8 +79,9 @@ internal class ObjAlligator : GameObject
         {
             MapManager.ObjLink.UpdatePlayer = false;
 
-            _canPosition += _canVelocity;
-            _canVelocity.Y += _canGravity * Game1.TimeMultiplier;
+            _canVelocity.Y += _canGravity * Game1.TimeMultiplier * 0.5f;
+            _canPosition += _canVelocity * Game1.DeltaTime;
+            _canVelocity.Y += _canGravity * Game1.TimeMultiplier * 0.5f;
 
             if (_canPosition.Y > EntityPosition.Y - 7 - _canSprite.ScaledRectangle.Height)
             {
@@ -111,7 +112,7 @@ internal class ObjAlligator : GameObject
         _canPosition = new Vector2(
             EntityPosition.X - 2 - _canSprite.ScaledRectangle.Width,
             EntityPosition.Y - 10 - _canSprite.ScaledRectangle.Height);
-        _canVelocity = new Vector2(0, -1f);
+        _canVelocity = new Vector2(0, -0.45f);
 
         Game1.GameManager.PlaySoundEffect("D360-36-24");
     }
