@@ -919,6 +919,7 @@ public class Game1 : Game
         EditorUi.SizeChanged();
 
         ScreenManager.OnResize(WindowWidth, WindowHeight);
+		UiPageManager.OnResize(WindowWidth, WindowHeight);
     }
 
     private void UpdateRenderTargets()

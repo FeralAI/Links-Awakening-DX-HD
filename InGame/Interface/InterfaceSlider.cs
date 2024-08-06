@@ -92,7 +92,7 @@ public class InterfaceSlider : InterfaceElement
         }
     }
 
-    public void UpdateStepSize(int start, int end, int steps)
+    public void UpdateStepSize(int start, int end, int stepSize)
     {
         if (start == Start && end == End)
             return;
