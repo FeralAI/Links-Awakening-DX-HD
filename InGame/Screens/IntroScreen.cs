@@ -108,10 +108,11 @@ public class IntroScreen(string screenId) : Screen(screenId)
     private readonly int[] _thunderFrame = { 1, 0, 1, 2, 1, 0, 1, 2, 1, 0, 1, 2, 1, 0 };
     private readonly Color[] _oceanColor = { new(0, 32, 168), new(32, 32, 168), new(96, 96, 232) };
 
-    private DictAtlasEntry _spriteBackground;
-    private DictAtlasEntry _spriteMountain;
-    private DictAtlasEntry _spriteLogo0;
-    private DictAtlasEntry _spriteLogo1;
+        private DictAtlasEntry _spriteBackground;
+        private DictAtlasEntry _spriteMountain;
+        private DictAtlasEntry _spriteLogo0;
+        private DictAtlasEntry _spriteLogo1;
+        private DictAtlasEntry _spriteDX;
 
     private readonly Rectangle _treesRectangle = new(0, 320, 32, 46);
     private readonly Rectangle _sandRectangle = new(0, 364, 32, 16);
@@ -176,10 +177,11 @@ public class IntroScreen(string screenId) : Screen(screenId)
 
         _spriteOceanBoat = Resources.GetSprite("intro_boat");
 
-        _spriteBackground = Resources.GetSprite("intro_background");
-        _spriteMountain = Resources.GetSprite("intro_mountain");
-        _spriteLogo0 = Resources.GetSprite("intro_logo_0");
-        _spriteLogo1 = Resources.GetSprite("intro_logo_1");
+            _spriteBackground = Resources.GetSprite("intro_background");
+            _spriteMountain = Resources.GetSprite("intro_mountain");
+            _spriteLogo0 = Resources.GetSprite("intro_logo_0");
+            _spriteLogo1 = Resources.GetSprite("intro_logo_1");
+            _spriteDX = Resources.GetSprite("DX");
 
         _mountainLeftPosition.X = -_spriteBackground.SourceRectangle.Width / 2 - _spriteMountain.SourceRectangle.Width;
         _mountainLeftPosition.Y = 0;
@@ -263,9 +265,29 @@ public class IntroScreen(string screenId) : Screen(screenId)
         }
 #endif
 
-        if (Game1.FinishedLoading &&
-            (ControlHandler.ButtonPressed(CButtons.A) || ControlHandler.ButtonPressed(CButtons.Start)))
-            Game1.ScreenManager.ChangeScreen(Values.ScreenNameMenu);
+            if (Game1.FinishedLoading &&
+                (ControlHandler.ButtonPressed(CButtons.A) || ControlHandler.ButtonPressed(CButtons.Start)))
+            {
+                if (_currentState == States.StrandLogo)
+                {
+                    Game1.ScreenManager.ChangeScreen(Values.ScreenNameMenu);
+                } else
+                {
+                    Game1.GameManager.SetMusic(12, 0);
+
+                    _cameraState = 0;
+                    _cameraCenter = new Vector2(0, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
+                    _cameraStart = _cameraCenter;
+                    _cameraTarget = new Vector2(_cameraCenter.X, _logoPosition.Y + _spriteLogo0.ScaledRectangle.Height + 5);
+                    _marinPosition.X = -1000;
+                    _marinPosition.Y = -1000;
+
+                    _logoCounter = 1500;
+
+                    _currentState = States.StrandLogo;
+
+                }
+            }
 
         if (!Game1.FinishedLoading)
             _loadingAnimator.Update();
@@ -841,9 +863,14 @@ public class IntroScreen(string screenId) : Screen(screenId)
             var logoHeight = (int)(_spriteLogo0.SourceRectangle.Height * (MathF.Sin(_logoState * MathF.PI - MathF.PI / 2) * 0.5f + 0.5f));
             logoHeight += logoHeight % 2;
 
-            spriteBatch.Draw(_spriteLogo0.Texture,
-                new Rectangle((int)_logoPosition.X, (int)_logoPosition.Y + _spriteLogo0.SourceRectangle.Height / 2 - logoHeight / 2,
-                _spriteLogo0.SourceRectangle.Width, logoHeight), _spriteLogo0.ScaledRectangle, Color.White);
+                spriteBatch.Draw(_spriteLogo0.Texture,
+                    new Rectangle((int)_logoPosition.X, (int)_logoPosition.Y + _spriteLogo0.SourceRectangle.Height / 2 - logoHeight / 2,
+                    _spriteLogo0.SourceRectangle.Width, logoHeight), _spriteLogo0.ScaledRectangle, Color.White);
+
+                spriteBatch.Draw(_spriteDX.Texture,
+                    new Rectangle((int)_logoPosition.X, (int)_logoPosition.Y + _spriteDX.SourceRectangle.Height / 1 - logoHeight / 1,
+                    _spriteLogo0.SourceRectangle.Width, logoHeight), _spriteDX.ScaledRectangle, Color.White); 
+
 
             var textTransparency = Math.Clamp((_logoState - 0.5f) * 2, 0, 1);
             DrawHelper.DrawNormalized(spriteBatch, _spriteLogo1, _logoPosition, Color.White * textTransparency);

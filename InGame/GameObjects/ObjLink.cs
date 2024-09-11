@@ -511,27 +511,86 @@ public partial class ObjLink : GameObject
     private void Update()
     {
 #if DEBUG
-        if (InputHandler.KeyPressed(Keys.Y))
-            Game1.GameManager.InitPieceOfPower();
-        if (InputHandler.KeyPressed(Keys.X))
-            _attackMode = !_attackMode;
-        if (_attackMode)
-        {
-            var damageBox = new Box(EntityPosition.X - 160, EntityPosition.Y - 140, 0, 320, 280, 16);
-            var damageOrigin = damageBox.Center;
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Sword1, Game1.GameManager.PieceOfPowerIsActive ? 2 : 1, Game1.GameManager.PieceOfPowerIsActive);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Bomb, 2, false);
-            Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Bow, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Hookshot, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.MagicRod, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.MagicPowder, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.PegasusBootsSword, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.PegasusBootsPush, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.ThrownObject, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.SwordShot, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.SwordHold, 2, false);
-            //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.SwordSpin, 2, false);
-        }
+            if (InputHandler.KeyPressed(Keys.Y))
+                Game1.GameManager.InitPieceOfPower();
+            if (InputHandler.KeyPressed(Keys.X))
+                _attackMode = !_attackMode;
+            if (_attackMode)
+            {
+                var damageBox = new Box(EntityPosition.X - 160, EntityPosition.Y - 140, 0, 320, 280, 16);
+                var damageOrigin = damageBox.Center;
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Sword1, Game1.GameManager.PieceOfPowerIsActive ? 2 : 1, Game1.GameManager.PieceOfPowerIsActive);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Bomb, 2, false);
+                Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Bow, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.Hookshot, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.MagicRod, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.MagicPowder, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.PegasusBootsSword, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.PegasusBootsPush, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.ThrownObject, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.SwordShot, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.SwordHold, 2, false);
+                //Map.Objects.Hit(this, damageOrigin, damageBox, HitType.SwordSpin, 2, false);
+            }
+
+            // Max Hearts
+            if (InputHandler.KeyDown(Microsoft.Xna.Framework.Input.Keys.F8))
+            {
+                Game1.GameManager.MaxHearths = 14;
+                Game1.GameManager.HealPlayer(99);
+            }
+
+            // Full Heal
+            if (InputHandler.KeyDown(Microsoft.Xna.Framework.Input.Keys.F9))
+            {
+                Game1.GameManager.HealPlayer(99);
+            }
+
+            // Money
+            if (InputHandler.KeyDown(Microsoft.Xna.Framework.Input.Keys.F10))
+            {
+                PickUpItem(new GameItemCollected("ruby") { Count = 999 }, false, false, false);
+            }
+
+            // Dungeon Utils
+            if (InputHandler.KeyDown(Microsoft.Xna.Framework.Input.Keys.F11))
+            {
+                PickUpItem(new GameItemCollected("smallkey") { Count = 9 }, false, false, false);
+                PickUpItem(new GameItemCollected("compass"), false, false, false);
+                PickUpItem(new GameItemCollected("stonebeak"), false, false, false);
+                PickUpItem(new GameItemCollected("dmap"), false, false, false);
+                PickUpItem(new GameItemCollected("nightmarekey"), false, false, false);
+            }
+
+            // All items
+            if (InputHandler.KeyDown(Microsoft.Xna.Framework.Input.Keys.F12))
+            {
+                PickUpItem(new GameItemCollected("sword2"), false, false, false);
+                PickUpItem(new GameItemCollected("mirrorShield"), false, false, false);
+                PickUpItem(new GameItemCollected("feather"), false, false, false);
+                PickUpItem(new GameItemCollected("stonelifter2"), false, false, false);
+                PickUpItem(new GameItemCollected("pegasusBoots"), false, false, false);
+                PickUpItem(new GameItemCollected("shovel"), false, false, false);
+                PickUpItem(new GameItemCollected("flippers"), false, false, false);
+                PickUpItem(new GameItemCollected("magicRod"), false, false, false);
+                PickUpItem(new GameItemCollected("hookshot"), false, false, false);
+                PickUpItem(new GameItemCollected("boomerang"), false, false, false);
+                PickUpItem(new GameItemCollected("powder") { Count = 999 }, false, false, false);
+                PickUpItem(new GameItemCollected("bomb") { Count = 999 }, false, false, false);
+                PickUpItem(new GameItemCollected("bow") { Count = 999 }, false, false, false);
+                PickUpItem(new GameItemCollected("ocarina"), false, false, false);
+                PickUpItem(new GameItemCollected("trade13"), false, false, false);
+
+                for (int i = 0; i < 8; ++i)
+                {
+                    Game1.GameManager.CollectItem(new GameItemCollected("instrument" + i));
+                }
+
+                for (int i = 1; i <= 5; ++i)
+                {
+                    Game1.GameManager.CollectItem(new GameItemCollected("dkey" + i));
+                }
+            }
 #endif
 
         if (CurrentState == State.FallRotateEntry)
@@ -2912,7 +2971,7 @@ public partial class ObjLink : GameObject
 
         CurrentState = State.Idle;
 
-        var recInteraction = new RectangleF(EntityPosition.X - 64, EntityPosition.Y - 64 - 8, 128, 128);
+            var recInteraction = new RectangleF(EntityPosition.X - 128, EntityPosition.Y - 128 - 8, 256, 256);
 
         _ocarinaList.Clear();
         Map.Objects.GetComponentList(_ocarinaList,

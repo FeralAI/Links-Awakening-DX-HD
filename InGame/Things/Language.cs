@@ -21,7 +21,8 @@ public class Language
         {
             // the default (first) entry is english
             { "eng", [] },
-            { "spa", [] }
+            { "spa", [] },
+            { "rus", [] },
         };
 
         for (var i = 0; i < files.Length; i++)

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Base;
 using ProjectZ.InGame.GameSystems;
 using ProjectZ.InGame.Map;
 using ProjectZ.InGame.Overlay;
@@ -546,9 +547,9 @@ public class GameManager
             if (dialogKey != null)
                 stateString = SaveManager.GetString(dialogKey);
 
-            InGameOverlay.TextboxOverlay.StartDialog(
-                Game1.LanguageManager.GetString(dialogKey + (stateString != null ? "_" + stateString : ""), "error"));
-        }
+                InGameOverlay.TextboxOverlay.StartDialog(
+                    Game1.LanguageManager.GetString(dialogKey + (stateString != null ? "_" + stateString : ""), "error " + dialogKey + " " + stateString));
+            }
 
         return null;
     }

@@ -33,11 +33,27 @@ class NewGamePage : InterfacePage
         { CapsLockCharacter, 'Z', 'X', 'C', 'V', 'B', 'N', 'M', ' ', BackCharacter }
     };
 
+    private char[,] _charactersUpper_RUS = new char[,]
+    {
+        { 'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', '-' },
+        { 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', '-' },
+        { 'С', 'Т', 'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', '-' },
+        { CapsLockCharacter, 'Ъ', 'Ы', 'Ь', 'Э', 'Ю', 'Я', '-', '-', BackCharacter }
+    };
+
     private readonly char[,] _charactersLower = new char[,]
     {
         { 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p' },
         { 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '-' },
         { CapsLockCharacter, 'z', 'x', 'c', 'v', 'b', 'n', 'm', ' ', BackCharacter }
+    };
+
+    private char[,] _charactersLower_RUS = new char[,]
+    {
+        { 'а', 'б', 'в', 'г', 'д', 'е', 'ё', 'ж', 'з', '-' },
+        { 'и', 'й', 'к', 'л', 'м', 'н', 'о', 'п', 'р', '-' },
+        { 'с', 'т', 'у', 'ф', 'х', 'ц', 'ч', 'ш', 'щ', '-' },
+        { CapsLockCharacter, 'ъ', 'ы', 'ь', 'э', 'ю', 'я', '-', '-', BackCharacter }
     };
 
     public NewGamePage(int width, int height)
@@ -92,11 +108,11 @@ class NewGamePage : InterfacePage
         }
 
 
-        var nglBottomLayout = new InterfaceListLayout { Size = new Point(200, 20), HorizontalMode = true, Selectable = true };
-        nglBottomLayout.AddElement(new InterfaceButton(new Point(99, 20), new Point(1, 0), "new_game_menu_back", OnClickBackButton));
-        nglBottomLayout.AddElement(new InterfaceButton(new Point(99, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
-        nglBottomLayout.Select(InterfaceElement.Directions.Right, false);
-        nglBottomLayout.Deselect(false);
+            var nglBottomLayout = new InterfaceListLayout { Size = new Point(200, 20), HorizontalMode = true, Selectable = true };
+            nglBottomLayout.AddElement(new InterfaceButton(new Point(99, 20), new Point(1, 0), "new_game_menu_back", OnClickBackButton));
+            nglBottomLayout.AddElement(new InterfaceButton(new Point(112, 20), new Point(1, 0), "new_game_menu_start_game", OnClickNewGameButton));
+            nglBottomLayout.Select(InterfaceElement.Directions.Right, false);
+            nglBottomLayout.Deselect(false);
 
         newGameLayout.AddElement(nglBottomLayout);
         newGameLayout.Select(InterfaceElement.Directions.Top, false);
