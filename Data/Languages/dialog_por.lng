@@ -47,11 +47,11 @@ trade12 Você devolveu o colar ¬ e pegou uma escama ­ da cauda da sereia. Como
 trade13 Você conseguiu a Lupa de Aumento! Isso revelará muitas coisas que você não podia ver antes!
 
 // keyholes
-keyhole_0 Hunh? Um buraco de fechadura aqui?\nDiz, 'Buraco de Fechadura da Cauda'
-keyhole_1 Hunh? Um buraco de fechadura aqui?\nDiz, 'Buraco de Fechadura do Lodo'
-keyhole_2 Hunh? Um buraco de fechadura aqui?\nDiz, 'Buraco de Fechadura do Pescador'
-keyhole_3 Hunh? Um buraco de fechadura aqui?\nDiz, 'Buraco de Fechadura da Superfície'
-keyhole_4 Hunh? Um buraco de fechadura aqui?\nDiz, 'Buraco de Fechadura de Pássaro'
+keyhole_0 Hunh? Uma fechadura aqui?\nDiz 'Chave da Cauda'
+keyhole_1 Hunh? Uma fechadura aqui?\nDiz 'Chave do Lodo'
+keyhole_2 Hunh? Uma fechadura aqui?\nDiz 'Chave do Pescador'
+keyhole_3 Hunh? Uma fechadura aqui?\nDiz 'Chave da Superfície'
+keyhole_4 Hunh? Uma fechadura aqui?\nDiz 'Chave do Pássaro'
 
 // collectables
 toadstool Você colhe o cogumelo... Ao segurá-lo sobre a cabeça, um aroma suave flui em suas narinas.
@@ -64,7 +64,7 @@ heart Você pegou um Coração! Tum! Um dos seus Contêineres de Coração foi p
 ruby20 Você pegou 20 Rúpias! QUE ALEGRIA!
 ruby50 Você pegou 50 Rúpias!\nMuito Bom!
 ruby100 Você pegou 100 Rúpias!\nVocê está Feliz!
-ruby200 Você pegou 200 Rúpias!\nVocê está Extático!
+ruby200 Você pegou 200 Rúpias!\nVocê está Eufórico!
 
 // trendy game
 ruby30 São 30 Rúpias! Você pode jogar o jogo mais três vezes com isso!
@@ -182,7 +182,7 @@ castle_button Hunh? Parece que o portão do castelo se abriu! Agora você pode s
 
 door_nightmarekey Hein? Está trancado! Você pode abrir a porta com a Chave do Pesadelo.
 
-dungeon_keyhole_block Hunh? Essa rocha tem um buraco de fechadura! Você deve voltar com uma chave!
+dungeon_keyhole_block Hunh? Essa rocha tem uma fechadura! Você deve voltar com uma chave!
 rock_cracks_message Esta rocha tem muitas rachaduras... Deve haver alguma maneira de quebrá-la...
 crystal_hard Oh? Que objeto estranho! Deve haver alguma maneira de enfrentar esse obstáculo.
 
