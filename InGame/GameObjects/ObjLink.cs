@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
@@ -56,6 +56,9 @@ public partial class ObjLink : GameObject
     private const float BootsRunningSpeed = 2.0f;
     private const float SwimSpeed = 0.5f;
     private const float SwimSpeedA = 1.0f;
+
+    private const float WalkSpeedBoosted = 1.25f;
+    private const float WalkSpeedPoPBoosted = 1.5f;
 
     private float _currentWalkSpeed;
     private float _waterSoundCounter;
@@ -816,7 +819,10 @@ public partial class ObjLink : GameObject
         _hasStartedJumping = _startedJumping;
         _startedJumping = false;
 
-        _currentWalkSpeed = Game1.GameManager.PieceOfPowerIsActive ? WalkSpeedPoP : WalkSpeed;
+        if (GameSettings.BoostWalkSpeed)
+            _currentWalkSpeed = Game1.GameManager.PieceOfPowerIsActive ? WalkSpeedPoPBoosted : WalkSpeedBoosted;
+        else
+            _currentWalkSpeed = Game1.GameManager.PieceOfPowerIsActive ? WalkSpeedPoP : WalkSpeed;
     }
 
     #region Draw

@@ -35,6 +35,28 @@ class GameSettingsPage : InterfacePage
             "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
         contentLayout.AddElement(toggleAutosave);
 
+        var toggleExtraDialog = InterfaceToggle.GetToggleButton(
+            new Point(buttonWidth, 18),
+            new Point(5, 2),
+            "settings_game_extra_dialogs",
+            GameSettings.ExtraDialog,
+            value =>
+            {
+                GameSettings.ExtraDialog = value;
+                Game1.GameManager.Reload(); // Hack to reset dialogs on some items
+            }
+        );
+        contentLayout.AddElement(toggleExtraDialog);
+
+        var toggleBoostWalkSpeed = InterfaceToggle.GetToggleButton(
+            new Point(buttonWidth, 18),
+            new Point(5, 2),
+            "settings_game_boost_walk_speed",
+            GameSettings.BoostWalkSpeed,
+            value => GameSettings.BoostWalkSpeed = value
+        );
+        contentLayout.AddElement(toggleBoostWalkSpeed);
+
         gameSettingsList.AddElement(contentLayout);
 
         _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };

@@ -197,6 +197,10 @@ public class GameManager
         // load the dialog paths
         DialogPathLoader.LoadScripts(Values.PathContentFolder + "scripts.zScript", _dialogPaths);
     }
+    public void Reload()
+    {
+        ItemManager.Load();
+    }
 
     public void OnLoad()
     {

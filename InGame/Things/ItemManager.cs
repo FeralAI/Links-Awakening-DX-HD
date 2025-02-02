@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ProjectZ.InGame.Things;
 
@@ -13,6 +13,8 @@ public class ItemManager
     public void Load()
     {
         // TODO_Opt: load all the items from a file
+
+        _items.Clear();
 
         // dungeon
         // same keys but with different sounds and one does show the description
@@ -548,28 +550,28 @@ public class ItemManager
         _items.Add("guardianAcorn", new GameItem(
             Resources.GetSprite("guardianAcorn"),
             name: "guardianAcorn",
-            pickUpDialog: "guardianAcorn",
+            pickUpDialog: GameSettings.ExtraDialog ? "guardianAcorn" : null,
             showAnimation: 2,
             soundEffectName: "D360-23-17"
         ));
         _items.Add("pieceOfPower", new GameItem(
             Resources.GetSprite("pieceOfPower"),
             name: "pieceOfPower",
-            pickUpDialog: "pieceOfPower",
+            pickUpDialog: GameSettings.ExtraDialog ? "pieceOfPower" : null,
             showAnimation: 2,
             soundEffectName: "D360-23-17"
         ));
         _items.Add("sword1PoP", new GameItem(
             Resources.GetSprite("sword1"),
             name: "sword1PoP",
-            pickUpDialog: "pieceOfPower",
+            pickUpDialog: GameSettings.ExtraDialog ? "pieceOfPower" : null,
             showAnimation: 2,
             soundEffectName: "D360-23-17"
         ));
         _items.Add("sword2PoP", new GameItem(
             Resources.GetSprite("sword2"),
             name: "sword2PoP",
-            pickUpDialog: "pieceOfPower",
+            pickUpDialog: GameSettings.ExtraDialog ? "pieceOfPower" : null,
             showAnimation: 2,
             soundEffectName: "D360-23-17"
         ));

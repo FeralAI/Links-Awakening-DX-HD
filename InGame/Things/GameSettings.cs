@@ -14,6 +14,9 @@ class GameSettings
     public static bool BorderlessWindowed = false;
     public static bool IsFullscreen = false;
 
+    public static bool ExtraDialog = true;
+    public static bool BoostWalkSpeed = false;
+
     private static int _musicVolume = 100;
     private static int _effectVolume = 100;
 

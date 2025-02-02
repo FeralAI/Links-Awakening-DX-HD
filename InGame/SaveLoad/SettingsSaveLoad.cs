@@ -27,6 +27,8 @@ class SettingsSaveLoad
         GameSettings.EffectVolume = saveManager.GetInt("EffectVolume", GameSettings.EffectVolume);
         GameSettings.EnableShadows = saveManager.GetBool("EnableShadows", GameSettings.EnableShadows);
         GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
+        GameSettings.ExtraDialog = saveManager.GetBool("ExtraDialog", GameSettings.ExtraDialog);
+        GameSettings.BoostWalkSpeed = saveManager.GetBool("BoostWalkSpeed", GameSettings.BoostWalkSpeed);
         GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
         GameSettings.BorderlessWindowed = saveManager.GetBool("BorderlessWindowed", GameSettings.BorderlessWindowed);
         GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
@@ -52,6 +54,8 @@ class SettingsSaveLoad
         saveManager.SetInt("EffectVolume", GameSettings.EffectVolume);
         saveManager.SetBool("EnableShadows", GameSettings.EnableShadows);
         saveManager.SetBool("Autosave", GameSettings.Autosave);
+        saveManager.SetBool("ExtraDialog", GameSettings.ExtraDialog);
+        saveManager.SetBool("BoostWalkSpeed", GameSettings.BoostWalkSpeed);
         saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
         saveManager.SetBool("BorderlessWindowed", GameSettings.BorderlessWindowed);
         saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);
