@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ProjectZ.InGame.Things;
 
@@ -9,6 +9,62 @@ public class ItemManager
     public GameItem this[string key] => key != null && _items.ContainsKey(key) ? _items[key] : null;
 
     private readonly Dictionary<string, GameItem> _items = [];
+
+    public void DisableItemDialog(string key)
+    {
+        if (key == "guardianAcorn")
+        {
+            if (_items.ContainsKey("guardianAcorn"))
+            {
+                _items.Remove("guardianAcorn");
+            }
+
+            _items.Add("guardianAcorn", new GameItem(
+                Resources.GetSprite("guardianAcorn"),
+                name: "guardianAcorn",
+                pickUpDialog: null,
+                showAnimation: 2,
+                soundEffectName: "D360-23-17"
+            ));
+        }
+        else if (key == "pieceOfPower")
+        {
+            if (_items.ContainsKey("pieceOfPower"))
+            {
+                _items.Remove("pieceOfPower");
+            }
+            if (_items.ContainsKey("sword1PoP"))
+            {
+                _items.Remove("sword1PoP");
+            }
+            if (_items.ContainsKey("sword2PoP"))
+            {
+                _items.Remove("sword2PoP");
+            }
+
+            _items.Add("pieceOfPower", new GameItem(
+                Resources.GetSprite("pieceOfPower"),
+                name: "pieceOfPower",
+                pickUpDialog: null,
+                showAnimation: 2,
+                soundEffectName: "D360-23-17"
+            ));
+            _items.Add("sword1PoP", new GameItem(
+                Resources.GetSprite("sword1"),
+                name: "sword1PoP",
+                pickUpDialog: null,
+                showAnimation: 2,
+                soundEffectName: "D360-23-17"
+            ));
+            _items.Add("sword2PoP", new GameItem(
+                Resources.GetSprite("sword2"),
+                name: "sword2PoP",
+                pickUpDialog: null,
+                showAnimation: 2,
+                soundEffectName: "D360-23-17"
+            ));
+        }
+    }
 
     public void Load()
     {

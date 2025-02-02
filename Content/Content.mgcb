@@ -126,13 +126,21 @@
 /processorParam:TextureFormat=Color
 /build:Fonts/newHeaderFont.png
 
-#begin Fonts/smallFont.png
+#begin Fonts/smallFontMono.png
 /importer:TextureImporter
 /processor:FontTextureProcessor
 /processorParam:FirstCharacter= 
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Color
-/build:Fonts/smallFont.png
+/build:Fonts/smallFontMono.png
+
+#begin Fonts/smallFontOriginal.png
+/importer:TextureImporter
+/processor:FontTextureProcessor
+/processorParam:FirstCharacter= 
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Color
+/build:Fonts/smallFontOriginal.png
 
 #begin Light/doorLight.png
 /importer:TextureImporter

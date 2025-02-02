@@ -30,6 +30,7 @@ public class InterfaceLabel : InterfaceElement
     private Gravities _textAlignment = Gravities.Center;
 
     private readonly string _textKey;
+    private readonly string _additionalText;
 
     public InterfaceLabel(SpriteFont font, string key, Point size, Point margin)
     {
@@ -40,7 +41,9 @@ public class InterfaceLabel : InterfaceElement
         if (string.IsNullOrEmpty(key))
             return;
 
-        _textKey = key;
+        var _parts = key.Split('|');
+        _textKey = _parts[0];
+        _additionalText = _parts.Length > 1 ? _parts[1] : null;
         UpdateLanguageText();
     }
 
@@ -78,7 +81,7 @@ public class InterfaceLabel : InterfaceElement
 
     public void UpdateLanguageText()
     {
-        SetText(Game1.LanguageManager.GetString(_textKey, "error"));
+        SetText(Game1.LanguageManager.GetString(_textKey, "error") + _additionalText);
     }
 
     public override void Draw(SpriteBatch spriteBatch, Vector2 drawPosition, float scale, float transparency)

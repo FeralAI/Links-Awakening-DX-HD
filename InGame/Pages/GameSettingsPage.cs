@@ -31,31 +31,11 @@ class GameSettingsPage : InterfacePage
 
         contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 18), new Point(0, 2), "settings_game_language", PressButtonLanguageChange));
 
+        contentLayout.AddElement(new InterfaceButton(new Point(buttonWidth, 18), new Point(0, 2), $"settings_game_dialog_font|: {GameSettings.DialogFontName.ToString().Replace("smallFont", "")}", PressButtonDialogFontChange));
+
         var toggleAutosave = InterfaceToggle.GetToggleButton(new Point(buttonWidth, 18), new Point(5, 2),
             "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
         contentLayout.AddElement(toggleAutosave);
-
-        var toggleExtraDialog = InterfaceToggle.GetToggleButton(
-            new Point(buttonWidth, 18),
-            new Point(5, 2),
-            "settings_game_extra_dialogs",
-            GameSettings.ExtraDialog,
-            value =>
-            {
-                GameSettings.ExtraDialog = value;
-                Game1.GameManager.Reload(); // Hack to reset dialogs on some items
-            }
-        );
-        contentLayout.AddElement(toggleExtraDialog);
-
-        var toggleBoostWalkSpeed = InterfaceToggle.GetToggleButton(
-            new Point(buttonWidth, 18),
-            new Point(5, 2),
-            "settings_game_boost_walk_speed",
-            GameSettings.BoostWalkSpeed,
-            value => GameSettings.BoostWalkSpeed = value
-        );
-        contentLayout.AddElement(toggleBoostWalkSpeed);
 
         gameSettingsList.AddElement(contentLayout);
 
@@ -94,5 +74,12 @@ class GameSettingsPage : InterfacePage
     public void PressButtonLanguageChange(InterfaceElement element)
     {
         Game1.LanguageManager.ToggleLanguage();
+    }
+
+    public void PressButtonDialogFontChange(InterfaceElement element)
+    {
+        GameSettings.ToggleDialogFont();
+        Resources.SetGameFont(GameSettings.DialogFontName);
+        Game1.UiPageManager.Reload(); // Reload pages to pick up new font
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using ProjectZ.Content.Fonts;
 using ProjectZ.InGame.SaveLoad;
 
 namespace ProjectZ.InGame.Things;
@@ -49,6 +50,7 @@ internal class Resources
 
     public static SpriteFont EditorFont, EditorFontMonoSpace, EditorFontSmallMonoSpace;
     public static SpriteFont GameFont, GameHeaderFont;
+    public static Dictionary<FontNames.SpriteFontName, SpriteFont> GameFonts = [];
     public static SpriteFont FontCredits, FontCreditsHeader;
 
     public static Texture2D EditorEyeOpen, EditorEyeClosed, EditorIconDelete;
@@ -137,8 +139,7 @@ internal class Resources
 
         EditorFontSmallMonoSpace = content.Load<SpriteFont>("Fonts/editor small mono font");
 
-        GameFont = content.Load<SpriteFont>("Fonts/smallFont");
-        GameFont.LineSpacing = GameFontHeight;
+        LoadGameFonts(content);
 
         GameHeaderFont = content.Load<SpriteFont>("Fonts/newHeaderFont");
 
@@ -331,5 +332,26 @@ internal class Resources
                     TilesetSizes.Add(split[0], value);
             }
         }
+    }
+
+    public static void LoadGameFonts(ContentManager content)
+    {
+        for (int i = 0; i < FontNames.DialogFontNames.Count; i++)
+        {
+            FontNames.SpriteFontName fontName = FontNames.DialogFontNames[i];
+            SpriteFont tempSF = content.Load<SpriteFont>($"Fonts/{fontName}");
+            tempSF.LineSpacing = GameFontHeight;
+            GameFonts.Add(fontName, tempSF);
+
+            if (i == 0 || fontName == GameSettings.DialogFontName)
+            {
+                SetGameFont(fontName);
+            }
+        }
+    }
+
+    public static void SetGameFont(FontNames.SpriteFontName fontName)
+    {
+        GameFont = GameFonts.GetValueOrDefault(fontName);
     }
 }

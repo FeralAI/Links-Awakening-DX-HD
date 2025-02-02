@@ -1,4 +1,7 @@
 ﻿
+using ProjectZ.Content.Fonts;
+using ProjectZ.InGame.Pages;
+
 namespace ProjectZ.InGame.Things;
 
 class GameSettings
@@ -16,6 +19,7 @@ class GameSettings
 
     public static bool ExtraDialog = true;
     public static bool BoostWalkSpeed = false;
+    public static FontNames.SpriteFontName DialogFontName = FontNames.SpriteFontName.smallFontMono;
 
     private static int _musicVolume = 100;
     private static int _effectVolume = 100;
@@ -30,5 +34,14 @@ class GameSettings
     {
         get => _effectVolume;
         set { _effectVolume = value; }
+    }
+
+    public static void ToggleDialogFont()
+    {
+        int fontCount = FontNames.DialogFontNames.Count;
+        int index = FontNames.DialogFontNames.IndexOf(DialogFontName);
+        index = ++index % fontCount;
+
+        DialogFontName = FontNames.DialogFontNames[index];
     }
 }

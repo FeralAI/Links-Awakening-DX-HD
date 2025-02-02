@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
+using ProjectZ.Content.Fonts;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Things;
+using System;
 
 namespace ProjectZ.InGame.SaveLoad;
 
@@ -29,6 +31,10 @@ class SettingsSaveLoad
         GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
         GameSettings.ExtraDialog = saveManager.GetBool("ExtraDialog", GameSettings.ExtraDialog);
         GameSettings.BoostWalkSpeed = saveManager.GetBool("BoostWalkSpeed", GameSettings.BoostWalkSpeed);
+
+        string dialogFontNameStr = saveManager.GetString("DialogFontName", FontNames.SpriteFontName.smallFontOriginal.ToString());
+        GameSettings.DialogFontName = Enum.Parse<FontNames.SpriteFontName>(dialogFontNameStr);
+
         GameSettings.SmoothCamera = saveManager.GetBool("SmoothCamera", GameSettings.SmoothCamera);
         GameSettings.BorderlessWindowed = saveManager.GetBool("BorderlessWindowed", GameSettings.BorderlessWindowed);
         GameSettings.IsFullscreen = saveManager.GetBool("IsFullscreen", GameSettings.IsFullscreen);
@@ -56,6 +62,9 @@ class SettingsSaveLoad
         saveManager.SetBool("Autosave", GameSettings.Autosave);
         saveManager.SetBool("ExtraDialog", GameSettings.ExtraDialog);
         saveManager.SetBool("BoostWalkSpeed", GameSettings.BoostWalkSpeed);
+
+        saveManager.SetString("DialogFontName", GameSettings.DialogFontName.ToString());
+
         saveManager.SetBool("SmoothCamera", GameSettings.SmoothCamera);
         saveManager.SetBool("BorderlessWindowed", GameSettings.BorderlessWindowed);
         saveManager.SetBool("IsFullscreen", GameSettings.IsFullscreen);

@@ -53,6 +53,11 @@ class SettingsPage : InterfacePage
             Game1.UiPageManager.ChangePage(typeof(GraphicSettingsPage));
         }));
 
+        contentLayout.AddElement(new InterfaceButton(new Point(150, 25), new Point(1, 2), "settings_menu_mods", element =>
+        {
+            Game1.UiPageManager.ChangePage(typeof(ModsSettingsPage));
+        }));
+
         settingsLayout.AddElement(contentLayout);
 
         var bottomLayout = new InterfaceListLayout { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true };

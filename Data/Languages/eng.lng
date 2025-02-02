@@ -43,6 +43,7 @@ settings_menu_game Game
 settings_menu_audio Audio
 settings_menu_controls Controls
 settings_menu_video Video
+settings_menu_mods Mods
 settings_menu_back Back
 
 settings_audio_header Audio Settings
@@ -58,6 +59,7 @@ settings_game_boost_walk_speed Boost Walk Speed
 settings_game_change_smooth_camera Smooth Camera
 settings_game_fullscreen_windowed Borderless Windowed
 settings_game_fullscreen_mode Fullscreen
+settings_game_dialog_font Font
 
 settings_controls_header Control Settings
 settings_controls_keyboad Keyboard
@@ -78,7 +80,11 @@ settings_graphics_header Video Settings
 settings_graphics_game_scale Game Scale:
 settings_graphics_ui_scale UI Scale:
 settings_graphics_shadow Shadows
-settings_graphics_fps_lock FPS Lock
+settings_graphics_fps_lock V-Sync
+
+settings_mods_header Modifications
+settings_mods_extra_dialogs Show Extra Dialogs
+settings_mods_boost_walk_speed Boost Walk Speed
 
 map_overlay_close Close
 overlay_map Map
