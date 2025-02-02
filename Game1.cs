@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -159,8 +159,8 @@ public class Game1 : Game
         Content.RootDirectory = "Content";
 
         Graphics.GraphicsProfile = GraphicsProfile.HiDef;
-        Graphics.PreferredBackBufferWidth = 1500;
-        Graphics.PreferredBackBufferHeight = 1000;
+        Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+        Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
 
 #if MACOSX
         Window.ClientSizeChanged += ClientSizeChanged;
@@ -179,8 +179,6 @@ public class Game1 : Game
     private void ClientSizeChanged(object sender, EventArgs e)
     {
         OnResize();
-        Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
-        Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
     }
 
     private void ConsoleReaderThread()
@@ -325,7 +323,8 @@ public class Game1 : Game
         UpdateConsoleInput();
 
         // SetTransparency _fpsCounter counter
-        _fpsCounter.Update(gameTime);
+        if (ShowDebugText)
+            _fpsCounter.Update(gameTime);
 
         // toggle fullscreen
         if (InputHandler.KeyDown(Keys.LeftAlt) && InputHandler.KeyPressed(Keys.Enter))
@@ -335,7 +334,7 @@ public class Game1 : Game
             SettingsSaveLoad.SaveSettings();
         }
 
-        if(_finishedLoading && !_initRenderTargets)
+        if (_finishedLoading && !_initRenderTargets)
         {
             _initRenderTargets = true;
 
@@ -345,8 +344,7 @@ public class Game1 : Game
         }
 
         // check if the window is resized
-        if (WindowWidth != Window.ClientBounds.Width ||
-            WindowHeight != Window.ClientBounds.Height)
+        if (WindowWidth != Window.ClientBounds.Width || WindowHeight != Window.ClientBounds.Height)
             OnResize();
 
         UpdateRenderTargets();
@@ -365,7 +363,7 @@ public class Game1 : Game
 
         ControlHandler.Update();
 
-        if (EditorMode && InputHandler.KeyPressed(Values.DebugToggleDebugText))
+        if (InputHandler.KeyPressed(Values.DebugToggleDebugText))
             ShowDebugText = !ShowDebugText;
 
         if (!DebugStepper)
@@ -396,7 +394,6 @@ public class Game1 : Game
 
         if (_finishedLoading)
         {
-
             if (EditorMode)
             {
                 // update the ui
@@ -404,9 +401,9 @@ public class Game1 : Game
                 EditorUi.Update();
 
                 EditorUpdate(gameTime);
-            }
 
-            EditorUi.CurrentScreen = "";
+                EditorUi.CurrentScreen = "";
+            }
 
             // update the game ui
             UiPageManager.Update(gameTime);
@@ -424,7 +421,7 @@ public class Game1 : Game
         if (!DebugStepper || InputHandler.KeyPressed(Keys.M))
             ScreenManager.Update(gameTime);
 
-        if (_finishedLoading)
+        if (ShowDebugText && _finishedLoading)
         {
             DebugText += _fpsCounter.Msg;
 
@@ -459,7 +456,8 @@ public class Game1 : Game
         // draw the current screen
         ScreenManager.Draw(SpriteBatch);
 
-        BlurImage();
+        // FIXME: I don't think this does anything, but it does get performance back
+        //BlurImage();
 
         {
             Graphics.GraphicsDevice.SetRenderTarget(null);
@@ -891,6 +889,9 @@ public class Game1 : Game
 
         WindowWidth = Window.ClientBounds.Width;
         WindowHeight = Window.ClientBounds.Height;
+
+        Graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
+        Graphics.PreferredBackBufferHeight = Window.ClientBounds.Height;
 
         OnUpdateScale();
     }
