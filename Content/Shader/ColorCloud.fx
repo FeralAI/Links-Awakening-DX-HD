@@ -27,8 +27,8 @@ float4 PixelShaderFunction(float4 pos : SV_Position, float4 color : COLOR0, floa
 	float4 texColor = tex2D(sampler0, coords);
 	
 	float4 insideColor = color0;
-	if (((int)(((pos.x / scaleX + offset.x / scale)) / 4) +
-		 (int)(((pos.y / scaleY + offset.y / scale)) / 4)) % 2 == 0)
+	if (((uint)(((pos.x / scaleX + offset.x / scale)) / 4) +
+		 (uint)(((pos.y / scaleY + offset.y / scale)) / 4)) % 2 == 0)
 		insideColor = color1;
 
 	return insideColor * texColor;
