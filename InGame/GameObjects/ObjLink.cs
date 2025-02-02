@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.Xna.Framework;
@@ -276,6 +276,7 @@ public partial class ObjLink : GameObject
     // shield
     public bool CarryShield;
     private bool _wasBlocking;
+    private bool _isBlockingWhileCharging;
 
     // hookshot
     public ObjHookshot Hookshot = new();
@@ -2065,7 +2066,10 @@ public partial class ObjLink : GameObject
 
         Animation.SpeedMultiplier = 1.0f;
 
-        if (CurrentState == State.Idle && !_isWalking ||
+        if (CurrentState == State.Charging && _isBlockingWhileCharging)
+            Animation.Play((!_isWalking ? "standb" : "walkb") + shieldString + Direction);
+        else if (
+            CurrentState == State.Idle && !_isWalking ||
             CurrentState == State.Charging && !_isWalking ||
             CurrentState == State.Rafting && !_isWalking ||
             CurrentState == State.Teleporting ||
@@ -2261,6 +2265,8 @@ public partial class ObjLink : GameObject
             CurrentState = State.Rafting;
         else
             CurrentState = State.Idle;
+
+        _isBlockingWhileCharging = false;
     }
 
     private void UpdateGhostSpawn()
@@ -2326,6 +2332,11 @@ public partial class ObjLink : GameObject
                     if (Game1.GameManager.Equipment[i] != null &&
                         ControlHandler.ButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))))
                         HoldItem(Game1.GameManager.Equipment[i],
+                            ControlHandler.LastButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))));
+
+                    if (Game1.GameManager.Equipment[i] != null &&
+                        ControlHandler.ButtonReleased((CButtons)((int)CButtons.A * Math.Pow(2, i))))
+                        ReleasedItemButton(Game1.GameManager.Equipment[i],
                             ControlHandler.LastButtonDown((CButtons)((int)CButtons.A * Math.Pow(2, i))));
                 }
             }
@@ -2456,12 +2467,20 @@ public partial class ObjLink : GameObject
                 break;
         }
     }
+    private void ReleasedItemButton(GameItemCollected item, bool lastKeyDown)
+    {
+        if (item.Name == "shield" ||
+            item.Name == "mirrorShield")
+        {
+            _isBlockingWhileCharging = false;
+        }
+    }
 
     private void UseSword()
     {
         if (CurrentState != State.Idle && CurrentState != State.Pushing && CurrentState != State.Rafting &&
             (CurrentState != State.Jumping || _railJump) && (CurrentState != State.Swimming || !Map.Is2dMap)
-		    && CurrentState != State.Attacking)
+            && CurrentState != State.Attacking && CurrentState != State.Blocking)
             return;
 
         var slashSounds = new[] { "D378-02-02", "D378-20-14", "D378-21-15", "D378-24-18" };
@@ -2912,6 +2931,15 @@ public partial class ObjLink : GameObject
 
     private void HoldShield(bool lastKeyDown)
     {
+        if (CurrentState == State.Charging)
+        {
+            if (!_isBlockingWhileCharging)
+            {
+                Game1.GameManager.PlaySoundEffect("D378-22-16");
+                _isBlockingWhileCharging = true;
+            }
+        }
+
         if (CurrentState != State.Idle && CurrentState != State.Pushing)
             return;
 

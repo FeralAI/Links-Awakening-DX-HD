@@ -211,8 +211,10 @@ public class Game1 : Game
         // not sure how to copy the files in the correct directory...
         Content.RootDirectory += "/bin/MacOSX";
 #endif
+        OnUpdateScale();
+
         // game control stuff
-		ControlHandler.Initialize();
+        ControlHandler.Initialize();
 
         // load game settings
         SettingsSaveLoad.LoadSettings();

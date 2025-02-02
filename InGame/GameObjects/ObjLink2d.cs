@@ -404,6 +404,10 @@ public partial class ObjLink
                 else
                     Animation.Play("stand" + shieldString + Direction);
             }
+            else if (CurrentState == State.Charging && _isBlockingWhileCharging)
+            {
+                Animation.Play((!_isWalking ? "standb" : "walkb") + shieldString + Direction);
+            }
             else if (!_isWalking && CurrentState == State.Charging)
                 Animation.Play("stand" + shieldString + Direction);
             else if (CurrentState == State.Carrying)

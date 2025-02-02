@@ -104,6 +104,10 @@ internal class ObjStone : GameObject
 
         return true;
     }
+    public bool IsHeavy()
+    {
+        return _isHeavy;
+    }
 
     private bool DamagePlayer()
     {
