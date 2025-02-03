@@ -15,12 +15,15 @@
 		<DefineConstants>TRACE;WINDOWS</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
+		<Compile Remove="Assets\**" />
 		<Compile Remove="Content\bin\**" />
 		<Compile Remove="Content\obj\**" />
 		<Compile Remove="Fix\**" />
+		<EmbeddedResource Remove="Assets\**" />
 		<EmbeddedResource Remove="Content\bin\**" />
 		<EmbeddedResource Remove="Content\obj\**" />
 		<EmbeddedResource Remove="Fix\**" />
+		<None Remove="Assets\**" />
 		<None Remove="Content\bin\**" />
 		<None Remove="Content\obj\**" />
 		<None Remove="Fix\**" />
