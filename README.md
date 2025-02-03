@@ -28,13 +28,15 @@ Check the [wiki](https://github.com/ihm-tswow/Links-Awakening-DX-HD/wiki) for a 
 
 #### Show Extra Dialog
 
-Show or hide the Piece of Power / Guardian Acorn / Heavy Object dialogs that persistently pop up.
+Show or hide the Piece of Power / Guardian Acorn / Heavy Object dialogs that persistently pop up. Inspired by this [QoL Patch](https://www.romhacking.net/hacks/3597/) for the GBC DX version.
 
-Inspired by the the [QoL Patch](https://www.romhacking.net/hacks/3597/) for the GBC DX version.
+Default value is `ON`.
 
 #### Boost Walk Speed
 
 Set Link's base speed to 1.25x normal. Makes map traversal feel better without overdoing it.
+
+Default value is `OFF`.
 
 ### Font Selection!
 
@@ -44,11 +46,12 @@ Available in the Game Settings menu, choose between the original font or a monos
 
 The monospace version was in the original release, but went unused.
 
-### Various Other Tweaks
+### Other Enhancements and Fixes!
 
-Several other enchancements and fixes are included:
-
-* Enable UI scaling option and allow higher manual max value (same value as "Auto" setting)
+- Quit menu for easy exiting of the application
+- Adjust gameplay scaling using the L and R bumpers
+- UI scaling option
+- Performance optimizations to help on lower end devices and via emulation
 
 ## Credits
 
