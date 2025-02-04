@@ -52,6 +52,12 @@ The monospace version was in the original release, but went unused.
 - Adjust gameplay scaling using the L and R bumpers
 - UI scaling option
 - Performance optimizations to help on lower end devices and via emulation
+- [WIP] Additional Languages (credited by Git history):
+    - Spanish - [@edaznaran](https://github.com/edaznaran)
+    - Portuguese - [@altiereslima](https://github.com/altiereslima)
+    - Italian - [@mattiabrognoli](https://github.com/mattiabrognoli)
+    - Ukrainian - [@k3kukua](https://github.com/k3kukua)
+    - Russian - [@Dima353](https://github.com/Dima353)
 
 ## Credits
 
