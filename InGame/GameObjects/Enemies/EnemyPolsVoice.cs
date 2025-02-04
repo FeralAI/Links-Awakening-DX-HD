@@ -61,21 +61,23 @@ internal class EnemyPolsVoice : GameObject
         var damageBox = new CBox(EntityPosition, -7, -11, 0, 14, 11, 4);
         var hittableBox = new CBox(EntityPosition, -6, -12, 0, 12, 12, 8, true);
 
-        AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 1));
-        AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
-        AddComponent(BodyComponent.Index, _body);
-        AddComponent(AiComponent.Index, _aiComponent);
-        AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
-        AddComponent(BaseAnimationComponent.Index, animationComponent);
-        AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
-        AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
-        AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
-    }
-    private void OnSongPlayed(int songIndex)
-    {
-        if (songIndex == 0)
-            _damageState.BaseOnDeath(false);
-    }
+            AddComponent(DamageFieldComponent.Index, new DamageFieldComponent(damageBox, HitType.Enemy, 1));
+            AddComponent(HittableComponent.Index, new HittableComponent(hittableBox, OnHit));
+            AddComponent(BodyComponent.Index, _body);
+            AddComponent(AiComponent.Index, _aiComponent);
+            AddComponent(PushableComponent.Index, new PushableComponent(_body.BodyBox, OnPush));
+            AddComponent(BaseAnimationComponent.Index, animationComponent);
+            AddComponent(DrawComponent.Index, new BodyDrawComponent(_body, sprite, Values.LayerPlayer));
+            AddComponent(DrawShadowComponent.Index, new BodyDrawShadowComponent(_body, sprite) { ShadowWidth = 10 });
+            AddComponent(OcarinaListenerComponent.Index, new OcarinaListenerComponent(OnSongPlayed));
+        }
+
+        private void OnSongPlayed(int songIndex)
+        {
+            if (songIndex == 0)
+                _damageState.BaseOnDeath(false);
+
+        }
 
     private void InitWaiting()
     {

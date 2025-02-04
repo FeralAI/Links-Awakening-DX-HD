@@ -102,13 +102,13 @@ internal class ObjStone : GameObject
         // deal damage to the player
         _damagePlayer = true;
 
-            return true;
-        }
+        return true;
+    }
 
-        public bool IsHeavy()
-        {
-            return _isHeavy;
-        }
+    public bool IsHeavy()
+    {
+        return _isHeavy;
+    }
 
     private bool DamagePlayer()
     {

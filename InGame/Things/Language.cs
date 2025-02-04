@@ -23,6 +23,7 @@ public class Language
             { "eng", [] },
             { "spa", [] },
             { "rus", [] },
+            { "por", [] },
         };
 
         for (var i = 0; i < files.Length; i++)

@@ -114,9 +114,9 @@ public class IntroScreen(string screenId) : Screen(screenId)
         private DictAtlasEntry _spriteLogo1;
         private DictAtlasEntry _spriteDX;
 
-    private readonly Rectangle _treesRectangle = new(0, 320, 32, 46);
-    private readonly Rectangle _sandRectangle = new(0, 364, 32, 16);
-    private readonly Rectangle _waveRectangle = new(0, 0, 32, 24);
+        private readonly Rectangle _treesRectangle = new Rectangle(0, 320, 32, 46);
+        private readonly Rectangle _sandRectangle = new Rectangle(0, 364, 32, 16);
+        private readonly Rectangle _waveRectangle = new Rectangle(0, 0, 32, 24);
 
     private Vector2 _logoPosition;
     private float _logoState;

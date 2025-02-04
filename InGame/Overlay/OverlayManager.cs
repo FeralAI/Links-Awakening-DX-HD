@@ -7,6 +7,7 @@ using ProjectZ.Base;
 using ProjectZ.Base.UI;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Interface;
 using ProjectZ.InGame.Overlay.Sequences;
 using ProjectZ.InGame.Pages;
 using ProjectZ.InGame.Things;

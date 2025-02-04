@@ -2503,37 +2503,38 @@ public partial class ObjLink : GameObject
         }
     }
 
-    private void HoldItem(GameItemCollected item, bool lastKeyDown)
-    {
-        switch (item.Name)
+        private void HoldItem(GameItemCollected item, bool lastKeyDown)
         {
-            case "sword1":
-                HoldSword();
-                break;
-            case "sword2":
-                HoldSword();
-                break;
-            case "shield":
-            case "mirrorShield":
-                HoldShield(lastKeyDown);
-                break;
-            case "stonelifter":
-            case "stonelifter2":
-                HoldStoneLifter();
-                break;
-            case "pegasusBoots":
-                HoldPegasusBoots();
-                break;
+            switch (item.Name)
+            {
+                case "sword1":
+                    HoldSword();
+                    break;
+                case "sword2":
+                    HoldSword();
+                    break;
+                case "shield":
+                case "mirrorShield":
+                    HoldShield(lastKeyDown);
+                    break;
+                case "stonelifter":
+                case "stonelifter2":
+                    HoldStoneLifter();
+                    break;
+                case "pegasusBoots":
+                    HoldPegasusBoots();
+                    break;
+            }
         }
-    }
-    private void ReleasedItemButton(GameItemCollected item, bool lastKeyDown)
-    {
-        if (item.Name == "shield" ||
-            item.Name == "mirrorShield")
+
+        private void ReleasedItemButton(GameItemCollected item, bool lastKeyDown)
         {
-            _isBlockingWhileCharging = false;
+            if (item.Name == "shield" || 
+                item.Name == "mirrorShield")
+            {
+                _isBlockingWhileCharging = false;
+            }
         }
-    }
 
     private void UseSword()
     {

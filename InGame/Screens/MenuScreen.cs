@@ -115,6 +115,7 @@ public class MenuScreen(string screenId) : Screen(screenId)
                 case 0: backHelp = backStr + " Back"; break;
                 case 1: backHelp = backStr + " Atrás"; break;
                 case 2: backHelp = backStr + " Назад"; break;
+                case 3: backHelp = backStr + " Voltar"; break;
                 // add cases for each language...
             }
 
@@ -136,13 +137,14 @@ public class MenuScreen(string screenId) : Screen(screenId)
                 case 0: inputHelper = selectStr + " Select"; break;
                 case 1: inputHelper = selectStr + " Elegir"; break;
                 case 2: inputHelper = selectStr + " Выбор"; break;
+                case 3: inputHelper = selectStr + " Selecionar"; break;
                 // add cases for each language...
             }
 
-            var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
-            spriteBatch.DrawString(Resources.GameFont, inputHelper,
-                new Vector2(_menuRectangle.Right - (selectTextSize.X + 2) * _scale, _menuRectangle.Bottom - selectTextSize.Y * _scale), Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
-        }
+                var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
+                spriteBatch.DrawString(Resources.GameFont, inputHelper,
+                    new Vector2(_menuRectangle.Right - (selectTextSize.X + 2) * _scale, _menuRectangle.Bottom - selectTextSize.Y * _scale), Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
+            }
 
         spriteBatch.End();
     }

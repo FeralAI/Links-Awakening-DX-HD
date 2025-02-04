@@ -22,8 +22,8 @@ class ControlSettingsPage : InterfacePage
         // control settings layout
         var controlLayout = new InterfaceListLayout { Size = new Point(width, height), Selectable = true };
 
-        controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
-            new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, 0)));
+            controlLayout.AddElement(new InterfaceLabel(Resources.GameHeaderFont, "settings_controls_header",
+                new Point(width - 50, (int)(height * Values.MenuHeaderSize)), new Point(0, -10)));
 
         var controllerHeight = (int)(height * Values.MenuContentSize);
 

@@ -309,9 +309,9 @@ class MBossArmosKnight : GameObject
         if (_hitRepelling)
             return Values.HitCollision.RepellingParticle;
 
-        if (((damageType & HitType.SwordSpin) != 0) || ((damageType & HitType.Bow) != 0)) //gatordile - original hit types
-        {
-            var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
+            if (((damageType & HitType.SwordSpin) != 0) || ((damageType & HitType.Bow) != 0)) //gatordile - original hit types
+            {
+                var hitCollision = _aiDamageState.OnHit(gameObject, direction, damageType, damage, pieceOfPower);
 
             if (_aiDamageState.CurrentLives <= 0)
             {
