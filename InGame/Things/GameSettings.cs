@@ -14,8 +14,8 @@ class GameSettings
     public static bool Autosave = true;
     public static bool SmoothCamera = true;
     
-    public static bool BorderlessWindowed = false;
-    public static bool IsFullscreen = false;
+    public static bool BorderlessWindowed = true;
+    public static bool IsFullscreen = true;
 
     public static bool ExtraDialog = true;
     public static bool BoostWalkSpeed = false;

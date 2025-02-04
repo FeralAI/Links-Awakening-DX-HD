@@ -108,7 +108,14 @@ public class MenuScreen(string screenId) : Screen(screenId)
                 backStr = ControlHandler.ButtonDictionary[CButtons.B].Keys[0].ToString();
             if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.B].Buttons.Length > 0)
                 backStr = ControlHandler.ButtonDictionary[CButtons.B].Buttons[0].ToString();
-            var backHelp = backStr + " Back";
+
+            var backHelp = "";
+            switch (Game1.LanguageManager.CurrentLanguageIndex)
+            {
+                case 0: backHelp = backStr + " Back"; break;
+                case 1: backHelp = backStr + " Atrás"; break;
+                // add cases for each language...
+            }
 
             var backTextSize = Resources.GameFont.MeasureString(backHelp);
             spriteBatch.DrawString(Resources.GameFont, backHelp,
@@ -121,7 +128,14 @@ public class MenuScreen(string screenId) : Screen(screenId)
                 selectStr = ControlHandler.ButtonDictionary[CButtons.A].Keys[0].ToString();
             if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.A].Buttons.Length > 0)
                 selectStr = ControlHandler.ButtonDictionary[CButtons.A].Buttons[0].ToString();
-            var inputHelper = selectStr + " Select";
+
+            var inputHelper = "";
+            switch (Game1.LanguageManager.CurrentLanguageIndex)
+            {
+                case 0: inputHelper = selectStr + " Select"; break;
+                case 1: inputHelper = selectStr + " Elegir"; break;
+                // add cases for each language...
+            }
 
             var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
             spriteBatch.DrawString(Resources.GameFont, inputHelper,

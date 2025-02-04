@@ -146,6 +146,7 @@ public class GameManager
     public bool PieceOfPowerIsActive;
     public int PieceOfPowerCount;
     public int PieceOfPowerDamageCount;
+    public bool HasStolen;
 
     private readonly Dictionary<string, List<DialogPath>> _dialogPaths = [];
     private DialogPath _currentDialogPath;

@@ -20,7 +20,8 @@ public class Language
         var languageStrings = new Dictionary<string, Dictionary<string, string>>
         {
             // the default (first) entry is english
-            { "eng", [] }
+            { "eng", [] },
+            { "spa", [] }
         };
 
         for (var i = 0; i < files.Length; i++)

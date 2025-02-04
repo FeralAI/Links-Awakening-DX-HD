@@ -32,7 +32,7 @@ ocarina_bad Well, it's an Ocarina, but you don't know how to play it...
 ocarina_bad_marin Not very good... Eh? What? Did I say something? No, you're hearing things...
 
 // trading alt + 0161
-trade0 You traded your ¡ for ¢! Maybe you can trade the ribbon for something else!
+trade0 You traded your º for ¢! Maybe you can trade the ribbon for something else!
 trade1 You exchanged ¢ for £! It's full of juicy beef!
 trade2 You gave him £ and got bananas ¤ in return! Good deal!
 trade4 You found a stick a monkey left behind...\nYou take it!
@@ -47,7 +47,7 @@ trade12 You returned the necklace ¬ and got a scale ­ of the mermaid's tail. H
 trade13 You've got the Magnifying Lens! This will reveal many things you couldn't see before!
 
 // keyholes
-keyhole_0 Hunh? A keyhole here?\nIt says, 'Tale Keyhole'
+keyhole_0 Hunh? A keyhole here?\nIt says, 'Tail Keyhole'
 keyhole_1 Hunh? A keyhole here?\nIt says, 'Slime Keyhole'
 keyhole_2 Hunh? A keyhole here?\nIt says, 'Angler Keyhole'
 keyhole_3 Hunh? A keyhole here?\nIt says, 'Face Keyhole'
@@ -128,7 +128,7 @@ signpost11 You're close to Tal Tal Heights. The Camera Shop is nearby.
 signpost12 ± Tamaranch Mt.\n° Goponga Swamp
 signpost13 ± Crazy Tracy\n² Manbo's Pond
 signpost14 ± Cemetery\n² Ukuku Prairie
-signpost15 ± Gopongo Swamp\n² Mysterious Forest
+signpost15 ± Goponga Swamp\n² Mysterious Forest
 
 signpost16 DANGER!\nKeep out!\n(Except BowWow)
 signpost17 Richard's Villa

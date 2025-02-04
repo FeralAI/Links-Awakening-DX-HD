@@ -556,7 +556,19 @@ public class TextboxOverlay
     public string SetUpString(string inputString)
     {
         // put in the players name
-        inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
+        if (Game1.GameManager.HasStolen == true)
+        {
+            switch (Game1.LanguageManager.CurrentLanguageIndex)
+            {
+                case 0: inputString = inputString.Replace("[NAME]", "Thief"); break;
+                case 1: inputString = inputString.Replace("[NAME]", "Ladrón"); break;
+                // add cases for each language...
+            }
+        }
+        else
+        {
+            inputString = inputString.Replace("[NAME]", Game1.GameManager.SaveName);
+        }
 
         inputString = ReplaceKeys(inputString);
 
