@@ -44,17 +44,6 @@ public class ControlHandler
         ButtonDictionary.Add(CButtons.Start, new ButtonMapper(new[] { Keys.Enter }, new[] { Buttons.Start }));
         ButtonDictionary.Add(CButtons.L, new ButtonMapper(new[] { Keys.OemMinus }, new[] { Buttons.LeftShoulder }));
         ButtonDictionary.Add(CButtons.R, new ButtonMapper(new[] { Keys.OemPlus }, new[] { Buttons.RightShoulder }));
-
-        if (GameSettings.SwapButtons)
-        {
-            ConfirmButton = CButtons.B;
-            CancelButton = CButtons.A;
-        }
-        else
-        {
-            ConfirmButton = CButtons.A;
-            CancelButton = CButtons.B;
-        }
     }
 
     public static void SaveButtonMaps(SaveManager saveManager)
@@ -103,6 +92,22 @@ public class ControlHandler
             // set the loaded buttons
             if (gamepadButtons.Count > 0)
                 buttonMap.Value.Buttons = gamepadButtons.ToArray();
+        }
+
+        SetConfirmCancelButtons();
+    }
+
+    public static void SetConfirmCancelButtons()
+    {
+        if (GameSettings.SwapButtons)
+        {
+            ConfirmButton = CButtons.B;
+            CancelButton = CButtons.A;
+        }
+        else
+        {
+            ConfirmButton = CButtons.A;
+            CancelButton = CButtons.B;
         }
     }
 

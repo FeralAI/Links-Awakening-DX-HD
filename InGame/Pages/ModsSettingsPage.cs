@@ -93,8 +93,7 @@ class ModsSettingsPage : InterfacePage
     {
         nextControlCheck = DateTime.Now.AddMilliseconds(500); // Small delay to prevent menu close on change
         GameSettings.SwapButtons = value;
-        ControlHandler.ResetControls();
+        ControlHandler.SetConfirmCancelButtons();
         InventoryOverlay.UpdateItemSlotStrings();
-        Game1.UiPageManager.Reload();
     }
 }
