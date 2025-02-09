@@ -110,15 +110,13 @@ public class MenuScreen(string screenId) : Screen(screenId)
                 backStr = ControlHandler.ButtonDictionary[CButtons.B].Buttons[0].ToString();
 
             var backHelp = "";
-            switch (Game1.LanguageManager.CurrentLanguageIndex)
+            backHelp = (LanguageCode)Game1.LanguageManager.CurrentLanguageIndex switch
             {
-                case 0: backHelp = backStr + " Back"; break;
-                case 1: backHelp = backStr + " Atrás"; break;
-                case 2: backHelp = backStr + " Назад"; break;
-                case 3: backHelp = backStr + " Voltar"; break;
-                // add cases for each language...
-            }
-
+                LanguageCode.spa => backStr + " Atrás",
+                LanguageCode.por => backStr + " Voltar",
+                LanguageCode.rus => backStr + " Назад",
+                _                => backStr + " Back",
+            };
             var backTextSize = Resources.GameFont.MeasureString(backHelp);
             spriteBatch.DrawString(Resources.GameFont, backHelp,
                 new Vector2(_menuRectangle.X + 2 * _scale, _menuRectangle.Bottom - backTextSize.Y * _scale), Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
@@ -132,16 +130,14 @@ public class MenuScreen(string screenId) : Screen(screenId)
                 selectStr = ControlHandler.ButtonDictionary[CButtons.A].Buttons[0].ToString();
 
             var inputHelper = "";
-            switch (Game1.LanguageManager.CurrentLanguageIndex)
+            inputHelper = (LanguageCode)Game1.LanguageManager.CurrentLanguageIndex switch
             {
-                case 0: inputHelper = selectStr + " Select"; break;
-                case 1: inputHelper = selectStr + " Elegir"; break;
-                case 2: inputHelper = selectStr + " Выбор"; break;
-                case 3: inputHelper = selectStr + " Selecionar"; break;
-                // add cases for each language...
-            }
-
-                var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
+                LanguageCode.spa => selectStr + " Elegir",
+                LanguageCode.por => selectStr + " Selecionar",
+                LanguageCode.rus => selectStr + " Выбор",
+                _                => selectStr + " Select",
+            };
+            var selectTextSize = Resources.GameFont.MeasureString(inputHelper);
                 spriteBatch.DrawString(Resources.GameFont, inputHelper,
                     new Vector2(_menuRectangle.Right - (selectTextSize.X + 2) * _scale, _menuRectangle.Bottom - selectTextSize.Y * _scale), Color.White, 0, Vector2.Zero, _scale, SpriteEffects.None, 0);
             }

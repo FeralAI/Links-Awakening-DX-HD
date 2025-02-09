@@ -558,12 +558,12 @@ public class TextboxOverlay
         // put in the players name
         if (Game1.GameManager.HasStolen == true)
         {
-            switch (Game1.LanguageManager.CurrentLanguageIndex)
+            inputString = (LanguageCode)Game1.LanguageManager.CurrentLanguageIndex switch
             {
-                case 0: inputString = inputString.Replace("[NAME]", "Thief"); break;
-                case 1: inputString = inputString.Replace("[NAME]", "Ladrón"); break;
-                // add cases for each language...
-            }
+                LanguageCode.spa => inputString.Replace("[NAME]", "Ladrón"),
+                LanguageCode.rus => inputString.Replace("[NAME]", "Жулик"),
+                _                => inputString.Replace("[NAME]", "Thief"),
+            };
         }
         else
         {

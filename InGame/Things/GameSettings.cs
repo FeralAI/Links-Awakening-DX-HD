@@ -19,7 +19,7 @@ class GameSettings
 
     public static bool ExtraDialog = true;
     public static bool BoostWalkSpeed = false;
-    public static FontNames.SpriteFontName DialogFontName = FontNames.SpriteFontName.smallFontMono;
+    public static FontNames.SpriteFontName DialogFontName = FontNames.SpriteFontName.smallFontOriginal;
 
     private static int _musicVolume = 100;
     private static int _effectVolume = 100;

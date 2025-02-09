@@ -5,6 +5,16 @@ using System.Linq;
 
 namespace ProjectZ.InGame.Things;
 
+public enum LanguageCode
+{
+    eng = 0,
+    spa = 1,
+    por = 2,
+    ita = 3,
+    ukr = 4,
+    rus = 5,
+}
+
 public class Language
 {
     public Dictionary<string, string> Strings => _languageStrings[CurrentLanguageIndex];
@@ -17,13 +27,16 @@ public class Language
     {
         // go through the .lng files and fill the _languageStrings dictionary array
         var files = Directory.GetFiles(Values.PathLanguageFolder);
+
         var languageStrings = new Dictionary<string, Dictionary<string, string>>
         {
             // the default (first) entry is english
             { "eng", [] },
             { "spa", [] },
-            { "rus", [] },
             { "por", [] },
+            { "ita", [] },
+            { "ukr", [] },
+            //{ "rus", [] },
         };
 
         for (var i = 0; i < files.Length; i++)
@@ -46,8 +59,11 @@ public class Language
 
                 if (dict == null)
                 {
-                    dict = [];
-                    languageStrings.Add(lngName, dict);
+                    //dict = [];
+                    //languageStrings.Add(lngName, dict);
+
+                    // Ignore language files that aren't defined to prevent error when changing setting
+                    continue;
                 }
 
                 if (split.Length == 1 || (split.Length == 2 && split[0] == "dialog"))
