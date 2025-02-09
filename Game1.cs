@@ -215,11 +215,11 @@ public class Game1 : Game
 #endif
         OnUpdateScale();
 
-        // load game settings
-        SettingsSaveLoad.LoadSettings();
-
         // game control stuff
         ControlHandler.Initialize();
+
+        // load game settings
+        SettingsSaveLoad.LoadSettings();
 
         // init gbs player; load gbs file
         GbsPlayer.LoadFile(Values.PathContentFolder + "Music/awakening.gbs");
