@@ -57,7 +57,6 @@ settings_game_change_smooth_camera Smooth Camera
 settings_game_fullscreen_windowed Borderless Windowed
 settings_game_fullscreen_mode Schermo Intero
 settings_game_dialog_font Font
-settings_game_swap_buttons Scambia Pulsanti
 
 settings_controls_header Impostazioni Controlli
 settings_controls_keyboad Tastiera
@@ -83,6 +82,7 @@ settings_graphics_fps_lock FPS Lock
 settings_mods_header Modifiche
 settings_mods_extra_dialogs Dialoghi Aggiuntivi
 settings_mods_boost_walk_speed Velocità di Camminata Veloce
+settings_mods_swap_buttons Scambia Pulsanti
 
 map_overlay_close Chiudi
 overlay_map Mappa

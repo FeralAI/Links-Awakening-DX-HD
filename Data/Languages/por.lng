@@ -58,7 +58,6 @@ settings_game_change_smooth_camera Câmera suave
 settings_game_fullscreen_windowed Janela sem bordas
 settings_game_fullscreen_mode Tela cheia
 settings_game_dialog_font Fonte
-settings_game_swap_buttons Botões de Troca
 
 settings_controls_header Configurar controle
 settings_controls_keyboad Teclado
@@ -86,6 +85,7 @@ settings_graphics_fps_lock Travar FPS
 settings_mods_header Modificações
 settings_mods_extra_dialogs Diálogos Extras
 settings_mods_boost_walk_speed Velocidade de Caminhada Rápida
+settings_mods_swap_buttons Botões de Troca
 
 map_overlay_close Fechar
 overlay_map Mapa

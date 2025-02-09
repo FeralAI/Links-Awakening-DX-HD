@@ -58,7 +58,6 @@ settings_game_change_smooth_camera Smooth Camera
 settings_game_fullscreen_windowed Borderless Windowed
 settings_game_fullscreen_mode Fullscreen
 settings_game_dialog_font Font
-settings_game_swap_buttons Swap Buttons
 
 settings_controls_header Control Settings
 settings_controls_keyboad Keyboard
@@ -86,6 +85,7 @@ settings_graphics_fps_lock V-Sync
 settings_mods_header Modifications
 settings_mods_extra_dialogs Show Extra Dialogs
 settings_mods_boost_walk_speed Boost Walk Speed
+settings_mods_swap_buttons Swap Buttons
 
 map_overlay_close Close
 overlay_map Map

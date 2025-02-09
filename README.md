@@ -38,6 +38,12 @@ Set Link's base speed to 1.25x normal. Makes map traversal feel better without o
 
 Default value is `OFF`.
 
+#### Swap Button Layout
+
+Default layout and UI actions (confirm and cancel) use XInput. This option will swap to the "other" layout, along with swapping the location of the confirm and cancel buttons.
+
+Default value is `OFF`.
+
 ### Font Selection!
 
 <img src="Assets/menu_settings_game.png" style="width: 400px" alt="Game Settings Menu" title="Game Settings Menu">
@@ -48,10 +54,9 @@ The monospace version was in the original release, but went unused.
 
 ### Other Enhancements and Fixes!
 
-- Quit menu for easy exiting of the application
-- Adjust gameplay scaling using the L and R bumpers
-- UI scaling option
-- Performance optimizations to help on lower end devices and via emulation
+- Quit menu for easy exiting of the application - [@dekart811](https://github.com/dekart811)
+- Adjust gameplay scaling using the L and R bumpers - [@malmazuke](https://github.com/malmazuke)
+- Performance optimizations to help on lower end devices and running via emulation
 - [WIP] Additional Languages (credited by Git history):
     - Spanish - [@edaznaran](https://github.com/edaznaran)
     - Portuguese - [@altiereslima](https://github.com/altiereslima)

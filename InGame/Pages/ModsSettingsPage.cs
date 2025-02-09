@@ -11,6 +11,7 @@ namespace ProjectZ.InGame.Pages;
 class ModsSettingsPage : InterfacePage
 {
     private readonly InterfaceListLayout _bottomBar;
+    private DateTime nextControlCheck = DateTime.MinValue;
 
     public ModsSettingsPage(int width, int height)
     {
@@ -45,6 +46,15 @@ class ModsSettingsPage : InterfacePage
         );
         contentLayout.AddElement(toggleBoostWalkSpeed);
 
+        var swapButtons = InterfaceToggle.GetToggleButton(
+            new Point(buttonWidth, 18),
+            new Point(5, 2),
+            "settings_mods_swap_buttons",
+            GameSettings.SwapButtons,
+            PressButtonSwapButtonsChange
+        );
+        contentLayout.AddElement(swapButtons);
+
         modsSettingsList.AddElement(contentLayout);
 
         _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -64,7 +74,7 @@ class ModsSettingsPage : InterfacePage
         base.Update(pressedButtons, gameTime);
 
         // close the page
-        if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
+        if (nextControlCheck <= DateTime.Now && ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             Game1.UiPageManager.PopPage();
     }
 
@@ -77,5 +87,14 @@ class ModsSettingsPage : InterfacePage
 
         PageLayout.Deselect(false);
         PageLayout.Select(InterfaceElement.Directions.Top, false);
+    }
+
+    public void PressButtonSwapButtonsChange(bool value)
+    {
+        nextControlCheck = DateTime.Now.AddMilliseconds(500); // Small delay to prevent menu close on change
+        GameSettings.SwapButtons = value;
+        ControlHandler.ResetControls();
+        InventoryOverlay.UpdateItemSlotStrings();
+        Game1.UiPageManager.Reload();
     }
 }

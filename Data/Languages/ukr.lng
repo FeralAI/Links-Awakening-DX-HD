@@ -56,7 +56,6 @@ settings_game_change_smooth_camera Плавна камера
 settings_game_fullscreen_windowed У вікні (Без рамки)
 settings_game_fullscreen_mode На весь екран
 settings_game_dialog_font Шрифт
-settings_game_swap_buttons Поміняти кнопки
 
 settings_controls_header Control Settings
 settings_controls_keyboad Клавіатура
@@ -82,6 +81,7 @@ settings_graphics_fps_lock Блокування FPS
 settings_mods_header Модифікації
 settings_mods_extra_dialogs Додаткові діалоги
 settings_mods_boost_walk_speed Швидка швидкість ходьби
+settings_mods_swap_buttons Поміняти кнопки
 
 map_overlay_close Close
 overlay_map Map
