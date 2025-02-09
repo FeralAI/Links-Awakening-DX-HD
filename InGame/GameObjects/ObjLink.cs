@@ -2365,7 +2365,7 @@ public partial class ObjLink : GameObject
         {
             // interact with object
             if ((CurrentState == State.Idle || CurrentState == State.Pushing || CurrentState == State.Swimming || CurrentState == State.CarryingItem) &&
-                ControlHandler.ButtonPressed(CButtons.A) && InteractWithObject())
+                ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) && InteractWithObject())
                 InputHandler.ResetInputState();
 
             if (_isTrapped && !_trappedDisableItems &&

@@ -30,7 +30,7 @@ public class DialogTester
             if (_counterA < 0)
             {
                 _counterA += TextboxSpeed;
-                ControlHandler.DebugButtons |= CButtons.A;
+                ControlHandler.DebugButtons |= ControlHandler.ConfirmButton;
 
                 if (!Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
                     StartNextDialog();

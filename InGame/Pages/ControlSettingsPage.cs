@@ -49,8 +49,25 @@ class ControlSettingsPage : InterfacePage
                 continue;
 
             _remapButtons[index] = new InterfaceListLayout { Size = new Point(buttonWidth + lableWidth * 2, lableHeight), HorizontalMode = true };
-            _remapButtons[index].AddElement(new InterfaceLabel("settings_controls_" + eButton, new Point(buttonWidth, lableHeight), Point.Zero)
-            { CornerRadius = 0, Color = Values.MenuButtonColor });
+
+            if (GameSettings.SwapButtons && (eButton == CButtons.A || eButton == CButtons.B || eButton == CButtons.X || eButton == CButtons.Y))
+            {
+                string labelKey = eButton switch
+                {
+                    CButtons.A => "settings_controls_B",
+                    CButtons.B => "settings_controls_A",
+                    CButtons.X => "settings_controls_Y",
+                    CButtons.Y => "settings_controls_X",
+                    _          => "",
+                };
+
+                _remapButtons[index].AddElement(new InterfaceLabel(labelKey, new Point(buttonWidth, lableHeight), Point.Zero) { CornerRadius = 0, Color = Values.MenuButtonColor });
+            }
+            else
+            {
+                _remapButtons[index].AddElement(new InterfaceLabel("settings_controls_" + eButton, new Point(buttonWidth, lableHeight), Point.Zero) { CornerRadius = 0, Color = Values.MenuButtonColor });
+            }
+
             _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
             _remapButtons[index].AddElement(new InterfaceLabel("error", new Point(lableWidth, lableHeight), new Point(0, 0)) { Translate = false });
 
@@ -125,7 +142,7 @@ class ControlSettingsPage : InterfacePage
             base.Update(pressedButtons, gameTime);
 
             // close the page
-            if (ControlHandler.ButtonPressed(CButtons.B))
+            if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
                 Game1.UiPageManager.PopPage();
         }
     }
@@ -171,7 +188,7 @@ class ControlSettingsPage : InterfacePage
 
     private void OnClickReset(InterfaceElement element)
     {
-        ControlHandler.ResetControlls();
+        ControlHandler.ResetControls();
         UpdateUi();
 
         InputHandler.ResetInputState();

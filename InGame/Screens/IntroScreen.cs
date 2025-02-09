@@ -266,7 +266,7 @@ public class IntroScreen(string screenId) : Screen(screenId)
 #endif
 
             if (Game1.FinishedLoading &&
-                (ControlHandler.ButtonPressed(CButtons.A) || ControlHandler.ButtonPressed(CButtons.Start)))
+                (ControlHandler.ButtonPressed(ControlHandler.ConfirmButton) || ControlHandler.ButtonPressed(CButtons.Start)))
             {
                 if (_currentState == States.StrandLogo)
                 {

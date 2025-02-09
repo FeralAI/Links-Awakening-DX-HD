@@ -178,7 +178,7 @@ class CopyPage : InterfacePage
     {
         base.Update(pressedButtons, gameTime);
 
-        if (ControlHandler.ButtonPressed(CButtons.B))
+        if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             Abort();
     }
 

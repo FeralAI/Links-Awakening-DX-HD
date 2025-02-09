@@ -52,7 +52,7 @@ class InventoryOverlay
     public const int DistX = 8;
     public const int DistY = 5;
 
-    private static readonly string[] _itemSlotString = new[] { "A", "B", "X", "Y" };
+    private static string[] _itemSlotString = new[] { "A", "B", "X", "Y" };
 
     //  3
     // 2 1
@@ -109,6 +109,8 @@ class InventoryOverlay
         _ocarinaFaces[0] = Resources.GetSprite("ocarina1");
         _ocarinaFaces[1] = Resources.GetSprite("ocarina2");
         _ocarinaFaces[2] = Resources.GetSprite("ocarina3");
+
+        UpdateItemSlotStrings();
     }
 
     public void UpdateRenderTarget()
@@ -175,6 +177,18 @@ class InventoryOverlay
             _selectedItemSlot += slots;
         if (_selectedItemSlot >= slots)
             _selectedItemSlot = _selectedItemSlot % slots;
+    }
+
+    public static void UpdateItemSlotStrings()
+    {
+        if (GameSettings.SwapButtons)
+        {
+            _itemSlotString = new[] { "B", "A", "Y", "X" };
+        }
+        else
+        {
+            _itemSlotString = new[] { "A", "B", "X", "Y" };
+        }
     }
 
     private bool MoveOcarinaSelection(int direction)

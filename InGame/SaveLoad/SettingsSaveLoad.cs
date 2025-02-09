@@ -31,6 +31,7 @@ class SettingsSaveLoad
         GameSettings.Autosave = saveManager.GetBool("Autosave", GameSettings.Autosave);
         GameSettings.ExtraDialog = saveManager.GetBool("ExtraDialog", GameSettings.ExtraDialog);
         GameSettings.BoostWalkSpeed = saveManager.GetBool("BoostWalkSpeed", GameSettings.BoostWalkSpeed);
+        GameSettings.SwapButtons = saveManager.GetBool("SwapButtons", GameSettings.SwapButtons);
 
         string dialogFontNameStr = saveManager.GetString("DialogFontName", FontNames.SpriteFontName.smallFontOriginal.ToString());
         GameSettings.DialogFontName = Enum.Parse<FontNames.SpriteFontName>(dialogFontNameStr);
@@ -62,6 +63,7 @@ class SettingsSaveLoad
         saveManager.SetBool("Autosave", GameSettings.Autosave);
         saveManager.SetBool("ExtraDialog", GameSettings.ExtraDialog);
         saveManager.SetBool("BoostWalkSpeed", GameSettings.BoostWalkSpeed);
+        saveManager.SetBool("SwapButtons", GameSettings.SwapButtons);
 
         saveManager.SetString("DialogFontName", GameSettings.DialogFontName.ToString());
 

@@ -35,7 +35,7 @@ class MapOverlaySequence : GameSequence
         _mapOverlay.Update();
 
         // can close the overlay if the dialog isn't running anymore
-        if (ControlHandler.ButtonPressed(CButtons.B) &&
+        if (ControlHandler.ButtonPressed(ControlHandler.CancelButton) &&
            !Game1.GameManager.InGameOverlay.TextboxOverlay.IsOpen)
             Game1.GameManager.InGameOverlay.CloseOverlay();
     }
@@ -62,10 +62,10 @@ class MapOverlaySequence : GameSequence
         // draw close text
         {
             var selectStr = "";
-            if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.B].Keys.Length > 0)
-                selectStr = ControlHandler.ButtonDictionary[CButtons.B].Keys[0].ToString();
-            if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[CButtons.B].Buttons.Length > 0)
-                selectStr = ControlHandler.ButtonDictionary[CButtons.B].Buttons[0].ToString();
+            if (ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys.Length > 0)
+                selectStr = ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Keys[0].ToString();
+            if (!ControlHandler.LastKeyboardDown && ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons.Length > 0)
+                selectStr = ControlHandler.ButtonDictionary[ControlHandler.CancelButton].Buttons[0].ToString();
             var inputHelper = selectStr + ": " + Game1.LanguageManager.GetString("map_overlay_close", "error");
 
             spriteBatch.DrawString(Resources.GameFont, inputHelper,

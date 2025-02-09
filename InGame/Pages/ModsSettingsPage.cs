@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages;
@@ -62,7 +64,7 @@ class ModsSettingsPage : InterfacePage
         base.Update(pressedButtons, gameTime);
 
         // close the page
-        if (ControlHandler.ButtonPressed(CButtons.B))
+        if (ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             Game1.UiPageManager.PopPage();
     }
 

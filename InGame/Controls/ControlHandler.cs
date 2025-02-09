@@ -12,6 +12,8 @@ public class ControlHandler
     public static Dictionary<CButtons, ButtonMapper> ButtonDictionary = [];
 
     public static CButtons DebugButtons;
+    public static CButtons ConfirmButton = CButtons.A;
+    public static CButtons CancelButton = CButtons.B;
 
     public static bool LastKeyboardDown;
 
@@ -24,10 +26,10 @@ public class ControlHandler
 
     public static void Initialize()
     {
-        ResetControlls();
+        ResetControls();
     }
 
-    public static void ResetControlls()
+    public static void ResetControls()
     {
         ButtonDictionary.Clear();
         ButtonDictionary.Add(CButtons.Left, new ButtonMapper(new[] { Keys.Left }, new[] { Buttons.DPadLeft }));
@@ -42,6 +44,17 @@ public class ControlHandler
         ButtonDictionary.Add(CButtons.Start, new ButtonMapper(new[] { Keys.Enter }, new[] { Buttons.Start }));
         ButtonDictionary.Add(CButtons.L, new ButtonMapper(new[] { Keys.OemMinus }, new[] { Buttons.LeftShoulder }));
         ButtonDictionary.Add(CButtons.R, new ButtonMapper(new[] { Keys.OemPlus }, new[] { Buttons.RightShoulder }));
+
+        if (GameSettings.SwapButtons)
+        {
+            ConfirmButton = CButtons.B;
+            CancelButton = CButtons.A;
+        }
+        else
+        {
+            ConfirmButton = CButtons.A;
+            CancelButton = CButtons.B;
+        }
     }
 
     public static void SaveButtonMaps(SaveManager saveManager)

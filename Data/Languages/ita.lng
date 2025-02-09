@@ -42,6 +42,7 @@ settings_menu_game Gioco
 settings_menu_audio Audio
 settings_menu_controls Controlli
 settings_menu_video Video
+settings_menu_mods Mods
 settings_menu_back Indietro
 
 settings_audio_header Impostazioni Audio
@@ -55,6 +56,8 @@ settings_game_autosave Autosalvataggio
 settings_game_change_smooth_camera Smooth Camera
 settings_game_fullscreen_windowed Borderless Windowed
 settings_game_fullscreen_mode Schermo Intero
+settings_game_dialog_font Font
+settings_game_swap_buttons Scambia Pulsanti
 
 settings_controls_header Impostazioni Controlli
 settings_controls_keyboad Tastiera
@@ -76,6 +79,10 @@ settings_graphics_game_scale Game Scale:
 settings_graphics_ui_scale UI Scale:
 settings_graphics_shadow Ombre
 settings_graphics_fps_lock FPS Lock
+
+settings_mods_header Modifiche
+settings_mods_extra_dialogs Dialoghi Aggiuntivi
+settings_mods_boost_walk_speed Velocità di Camminata Veloce
 
 map_overlay_close Chiudi
 overlay_map Mappa

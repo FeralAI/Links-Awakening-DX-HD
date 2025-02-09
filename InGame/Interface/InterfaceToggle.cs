@@ -70,7 +70,7 @@ public class InterfaceToggle : InterfaceElement
 
     public override InputEventReturn PressedButton(CButtons pressedButton)
     {
-        if (!ControlHandler.ButtonPressed(CButtons.A))
+        if (!ControlHandler.ButtonPressed(ControlHandler.ConfirmButton))
             return InputEventReturn.Nothing;
 
         Toggle();

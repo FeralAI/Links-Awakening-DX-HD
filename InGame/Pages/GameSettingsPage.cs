@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using ProjectZ.InGame.Controls;
 using ProjectZ.InGame.Interface;
+using ProjectZ.InGame.Overlay;
 using ProjectZ.InGame.Things;
 
 namespace ProjectZ.InGame.Pages;
@@ -9,6 +11,7 @@ namespace ProjectZ.InGame.Pages;
 class GameSettingsPage : InterfacePage
 {
     private readonly InterfaceListLayout _bottomBar;
+    private DateTime nextControlCheck = DateTime.MinValue;
 
     public GameSettingsPage(int width, int height)
     {
@@ -37,6 +40,15 @@ class GameSettingsPage : InterfacePage
             "settings_game_autosave", GameSettings.Autosave, newState => { GameSettings.Autosave = newState; });
         contentLayout.AddElement(toggleAutosave);
 
+        var swapButtons = InterfaceToggle.GetToggleButton(
+            new Point(buttonWidth, 18),
+            new Point(5, 2),
+            "settings_game_swap_buttons",
+            GameSettings.SwapButtons,
+            PressButtonSwapButtonsChange
+        );
+        contentLayout.AddElement(swapButtons);
+
         gameSettingsList.AddElement(contentLayout);
 
         _bottomBar = new InterfaceListLayout() { Size = new Point(width, (int)(height * Values.MenuFooterSize)), Selectable = true, HorizontalMode = true };
@@ -56,7 +68,7 @@ class GameSettingsPage : InterfacePage
         base.Update(pressedButtons, gameTime);
 
         // close the page
-        if (ControlHandler.ButtonPressed(CButtons.B))
+        if (nextControlCheck <= DateTime.Now && ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             Game1.UiPageManager.PopPage();
     }
 
@@ -81,5 +93,14 @@ class GameSettingsPage : InterfacePage
         GameSettings.ToggleDialogFont();
         Resources.SetGameFont(GameSettings.DialogFontName);
         Game1.UiPageManager.Reload(); // Reload pages to pick up new font
+    }
+
+    public void PressButtonSwapButtonsChange(bool value)
+    {
+        nextControlCheck = DateTime.Now.AddMilliseconds(500); // Small delay to prevent menu close on change
+        GameSettings.SwapButtons = value;
+        ControlHandler.ResetControls();
+        InventoryOverlay.UpdateItemSlotStrings();
+        Game1.UiPageManager.Reload();
     }
 }

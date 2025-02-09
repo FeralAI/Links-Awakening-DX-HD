@@ -58,6 +58,7 @@ settings_game_change_smooth_camera Smooth Camera
 settings_game_fullscreen_windowed Borderless Windowed
 settings_game_fullscreen_mode Fullscreen
 settings_game_dialog_font Font
+settings_game_swap_buttons Swap Buttons
 
 settings_controls_header Control Settings
 settings_controls_keyboad Keyboard

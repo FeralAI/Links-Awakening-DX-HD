@@ -53,7 +53,7 @@ class GameMenuPage : InterfacePage
         // close the page
         if (ControlHandler.ButtonPressed(CButtons.Start) ||
             ControlHandler.ButtonPressed(CButtons.Left) ||
-            ControlHandler.ButtonPressed(CButtons.B))
+            ControlHandler.ButtonPressed(ControlHandler.CancelButton))
             ClosePage();
     }
 
